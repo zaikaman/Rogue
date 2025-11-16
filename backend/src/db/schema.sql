@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS yield_history (
     position_id UUID REFERENCES positions(id) ON DELETE CASCADE,
     protocol TEXT NOT NULL,
     apy DECIMAL(10, 4) NOT NULL,
+    value DECIMAL(36, 18) NOT NULL,
     timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

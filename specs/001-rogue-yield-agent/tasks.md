@@ -72,58 +72,58 @@ description: "Task list for Rogue Autonomous DeFi Yield Optimization Agent imple
 
 #### Frontend Components
 
-- [ ] T026 [P] [US1] Create RiskSlider component in frontend/src/components/RiskSlider.tsx
-- [ ] T027 [P] [US1] Create StakeForm component with USDC/KRWQ input in frontend/src/components/StakeForm.tsx
-- [ ] T028 [P] [US1] Create APYCard display component in frontend/src/components/APYCard.tsx
-- [ ] T029 [P] [US1] Create Dashboard main view in frontend/src/pages/Dashboard.tsx
-- [ ] T030 [US1] Implement API client service in frontend/src/services/api.ts (depends on T026-T029)
-- [ ] T031 [US1] Implement smart contract interaction layer in frontend/src/services/contracts.ts
-- [ ] T032 [US1] Create usePosition React hook in frontend/src/hooks/usePosition.ts
-- [ ] T033 [US1] Create useWallet React hook wrapping RainbowKit in frontend/src/hooks/useWallet.ts
-- [ ] T034 [US1] Create currency formatting utilities in frontend/src/utils/format.ts
+- [x] T026 [P] [US1] Create RiskSlider component in frontend/src/components/RiskSlider.tsx
+- [x] T027 [P] [US1] Create StakeForm component with USDC/KRWQ input in frontend/src/components/StakeForm.tsx
+- [x] T028 [P] [US1] Create APYCard display component in frontend/src/components/APYCard.tsx
+- [x] T029 [P] [US1] Create Dashboard main view in frontend/src/pages/Dashboard.tsx
+- [x] T030 [US1] Implement API client service in frontend/src/services/api.ts (depends on T026-T029)
+- [x] T031 [US1] Implement smart contract interaction layer in frontend/src/services/contracts.ts
+- [x] T032 [US1] Create usePosition React hook in frontend/src/hooks/usePosition.ts
+- [x] T033 [US1] Create useWallet React hook wrapping RainbowKit in frontend/src/hooks/useWallet.ts
+- [x] T034 [US1] Create currency formatting utilities in frontend/src/utils/format.ts
 
 #### Backend API Endpoints
 
-- [ ] T035 [P] [US1] Implement POST /positions endpoint in backend/src/api/positions.ts
-- [ ] T036 [P] [US1] Implement GET /positions/:walletAddress endpoint in backend/src/api/positions.ts
-- [ ] T037 [P] [US1] Implement GET /positions/:id endpoint in backend/src/api/positions.ts
-- [ ] T038 [P] [US1] Implement GET /health endpoint in backend/src/api/health.ts
+- [x] T035 [P] [US1] Implement POST /positions endpoint in backend/src/api/positions.ts
+- [x] T036 [P] [US1] Implement GET /positions/:walletAddress endpoint in backend/src/api/positions.ts
+- [x] T037 [P] [US1] Implement GET /positions/:id endpoint in backend/src/api/positions.ts
+- [x] T038 [P] [US1] Implement GET /health endpoint in backend/src/api/health.ts
 
 #### Backend Services & Data Layer
 
-- [ ] T039 [P] [US1] Create Position entity schema in Supabase (id, wallet_address, token, amount, risk_profile, status, timestamps)
-- [ ] T040 [P] [US1] Implement Frax API integration service in backend/src/services/frax-api.ts
-- [ ] T041 [P] [US1] Implement Aave subgraph client in backend/src/services/aave-subgraph.ts
-- [ ] T042 [P] [US1] Implement Chainlink oracle reader service in backend/src/services/chainlink-oracle.ts
-- [ ] T043 [P] [US1] Implement KRWQ conversion utility in backend/src/utils/krwq-conversion.ts
+- [x] T039 [P] [US1] Create Position entity schema in Supabase (id, wallet_address, token, amount, risk_profile, status, timestamps)
+- [x] T040 [P] [US1] Implement Frax API integration service in backend/src/services/frax-api.ts
+- [x] T041 [P] [US1] Implement Aave subgraph client in backend/src/services/aave-subgraph.ts
+- [x] T042 [P] [US1] Implement Chainlink oracle reader service in backend/src/services/chainlink-oracle.ts
+- [x] T043 [P] [US1] Implement KRWQ conversion utility in backend/src/utils/krwq-conversion.ts
 
 #### ADK-TS Multi-Agent System
 
-- [ ] T044 [P] [US1] Implement Researcher agent (scan Frax/Aave yields) in backend/src/agents/researcher.ts
-- [ ] T045 [P] [US1] Implement Analyzer agent (strategy personalization) in backend/src/agents/analyzer.ts
-- [ ] T046 [P] [US1] Implement Executor agent (on-chain actions) in backend/src/agents/executor.ts
-- [ ] T047 [US1] Create Sequential Workflow Agent orchestrating Researcher → Analyzer → Executor in backend/src/workflows/yield-optimization.ts
+- [x] T044 [P] [US1] Implement Researcher agent (scan Frax/Aave yields) in backend/src/agents/researcher.ts
+- [x] T045 [P] [US1] Implement Analyzer agent (strategy personalization) in backend/src/agents/analyzer.ts
+- [x] T046 [P] [US1] Implement Executor agent (on-chain actions) in backend/src/agents/executor.ts
+- [x] T047 [US1] Create Sequential Workflow Agent orchestrating Researcher → Analyzer → Executor in backend/src/workflows/yield-optimization.ts
 
 #### Smart Contracts
 
-- [ ] T048 [P] [US1] Implement StakingProxy.sol ERC-20 staking contract in contracts/contracts/StakingProxy.sol
-- [ ] T049 [US1] Implement YieldHarvester.sol executor contract in contracts/contracts/YieldHarvester.sol
-- [ ] T050 [US1] Deploy StakingProxy and YieldHarvester to Polygon mainnet
-- [ ] T051 [US1] Create ethers.js wrapper for StakingProxy in backend/src/contracts/staking-proxy.ts
-- [ ] T052 [US1] Create ethers.js wrapper for YieldHarvester in backend/src/contracts/yield-harvester.ts
+- [x] T048 [P] [US1] Implement StakingProxy.sol ERC-20 staking contract in contracts/contracts/StakingProxy.sol
+- [x] T049 [US1] Implement YieldHarvester.sol executor contract in contracts/contracts/YieldHarvester.sol
+- [x] T050 [US1] Deploy StakingProxy and YieldHarvester to Polygon mainnet
+- [x] T051 [US1] Create ethers.js wrapper for StakingProxy in backend/src/contracts/staking-proxy.ts
+- [x] T052 [US1] Create ethers.js wrapper for YieldHarvester in backend/src/contracts/yield-harvester.ts
 
 #### Autonomous Execution (Cron)
 
-- [ ] T053 [P] [US1] Implement autonomous scan cron job in backend/src/cron/autonomous-scan.ts
-- [ ] T054 [P] [US1] Implement autonomous compound cron job in backend/src/cron/autonomous-compound.ts
-- [ ] T055 [US1] Configure node-cron triggers (every 4-24 hours configurable) in backend/src/server.ts
+- [x] T053 [P] [US1] Implement autonomous scan cron job in backend/src/cron/autonomous-scan.ts
+- [x] T054 [P] [US1] Implement autonomous compound cron job in backend/src/cron/autonomous-compound.ts
+- [x] T055 [US1] Configure node-cron triggers (every 4-24 hours configurable) in backend/src/server.ts
 
 #### Integration & Validation
 
-- [ ] T056 [US1] Integrate frontend StakeForm with backend POST /positions endpoint
-- [ ] T057 [US1] Integrate Dashboard with GET /positions endpoint and contract balance queries
-- [ ] T058 [US1] Add transaction history logging to Supabase in backend/src/api/transactions.ts
-- [ ] T059 [US1] Test end-to-end stake flow on Polygon mainnet per quickstart.md
+- [x] T056 [US1] Integrate frontend StakeForm with backend POST /positions endpoint
+- [x] T057 [US1] Integrate Dashboard with GET /positions endpoint and contract balance queries
+- [x] T058 [US1] Add transaction history logging to Supabase in backend/src/api/transactions.ts
+- [x] T059 [US1] Test end-to-end stake flow on Polygon mainnet per quickstart.md
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - users can stake and positions are autonomously managed
 
@@ -139,26 +139,26 @@ description: "Task list for Rogue Autonomous DeFi Yield Optimization Agent imple
 
 #### Frontend Components
 
-- [ ] T060 [P] [US2] Create YieldChart component with Recharts in frontend/src/components/YieldChart.tsx
-- [ ] T061 [P] [US2] Create AllocationSlider component (drag-to-adjust) in frontend/src/components/AllocationSlider.tsx
-- [ ] T062 [P] [US2] Create PositionDetail page view in frontend/src/pages/PositionDetail.tsx
-- [ ] T063 [US2] Update Dashboard to display live APY refresh in frontend/src/pages/Dashboard.tsx
+- [x] T060 [P] [US2] Create YieldChart component with Recharts in frontend/src/components/YieldChart.tsx
+- [x] T061 [P] [US2] Create AllocationSlider component (drag-to-adjust) in frontend/src/components/AllocationSlider.tsx
+- [x] T062 [P] [US2] Create PositionDetail page view in frontend/src/pages/PositionDetail.tsx
+- [x] T063 [US2] Update Dashboard to display live APY refresh in frontend/src/pages/Dashboard.tsx
 
 #### Backend API Endpoints
 
-- [ ] T064 [P] [US2] Implement GET /strategies endpoint (Analyzer output) in backend/src/api/strategies.ts
-- [ ] T065 [P] [US2] Implement PATCH /positions/:id/allocations endpoint in backend/src/api/positions.ts
-- [ ] T066 [US2] Add historical yield data tracking to Supabase schema in backend/src/db/schema.sql
+- [x] T064 [P] [US2] Implement GET /strategies endpoint (Analyzer output) in backend/src/api/strategies.ts
+- [x] T065 [P] [US2] Implement PATCH /positions/:id/allocations endpoint in backend/src/api/positions.ts
+- [x] T066 [US2] Add historical yield data tracking to Supabase schema in backend/src/db/schema.sql
 
 #### Backend Services
 
-- [ ] T067 [US2] Implement yield history aggregation service in backend/src/services/yield-history.ts
-- [ ] T068 [US2] Extend Analyzer agent to recalculate on allocation changes in backend/src/agents/analyzer.ts
+- [x] T067 [US2] Implement yield history aggregation service in backend/src/services/yield-history.ts
+- [x] T068 [US2] Extend Analyzer agent to recalculate on allocation changes in backend/src/agents/analyzer.ts
 
 #### Integration & Validation
 
-- [ ] T069 [US2] Integrate YieldChart with historical yield API endpoint
-- [ ] T070 [US2] Integrate AllocationSlider with PATCH /positions/:id/allocations endpoint
+- [x] T069 [US2] Integrate YieldChart with historical yield API endpoint
+- [x] T070 [US2] Integrate AllocationSlider with PATCH /positions/:id/allocations endpoint
 - [ ] T071 [US2] Test allocation adjustment flow updates strategy and schedules execution
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently - users can adjust and monitor positions
@@ -175,32 +175,32 @@ description: "Task list for Rogue Autonomous DeFi Yield Optimization Agent imple
 
 #### Frontend Components
 
-- [ ] T072 [P] [US3] Create ClaimUnstakeActions component with one-click buttons in frontend/src/components/ClaimUnstakeActions.tsx
-- [ ] T073 [P] [US3] Create TransactionHistory table component in frontend/src/components/TransactionHistory.tsx
-- [ ] T074 [US3] Update Dashboard to display reward token balances
+- [x] T072 [P] [US3] Create ClaimUnstakeActions component with one-click buttons in frontend/src/components/ClaimUnstakeActions.tsx
+- [x] T073 [P] [US3] Create TransactionHistory table component in frontend/src/components/TransactionHistory.tsx
+- [x] T074 [US3] Update Dashboard to display reward token balances
 
 #### Backend API Endpoints
 
-- [ ] T075 [P] [US3] Implement POST /positions/:id/claim endpoint in backend/src/api/positions.ts
-- [ ] T076 [P] [US3] Implement POST /positions/:id/unstake endpoint in backend/src/api/positions.ts
-- [ ] T077 [P] [US3] Implement GET /transactions/:walletAddress endpoint in backend/src/api/transactions.ts
+- [x] T075 [P] [US3] Implement POST /positions/:id/claim endpoint in backend/src/api/positions.ts
+- [x] T076 [P] [US3] Implement POST /positions/:id/unstake endpoint in backend/src/api/positions.ts
+- [x] T077 [P] [US3] Implement GET /transactions/:walletAddress endpoint in backend/src/api/transactions.ts
 
 #### Backend Services & Agent
 
-- [ ] T078 [P] [US3] Implement Governor agent (ATP reward distribution) in backend/src/agents/governor.ts
-- [ ] T079 [US3] Add Governor to Sequential Workflow (Researcher → Analyzer → Executor → Governor) in backend/src/workflows/yield-optimization.ts
-- [ ] T080 [US3] Create TransactionRecord entity schema in Supabase (tx_hash, type, timestamp, status, gas_cost, notes)
+- [x] T078 [P] [US3] Implement Governor agent (ATP reward distribution) in backend/src/agents/governor.ts
+- [x] T079 [US3] Add Governor to Sequential Workflow (Researcher → Analyzer → Executor → Governor) in backend/src/workflows/yield-optimization.ts
+- [x] T080 [US3] Create TransactionRecord entity schema in Supabase (tx_hash, type, timestamp, status, gas_cost, notes)
 
 #### Smart Contracts
 
-- [ ] T081 [P] [US3] Implement ATP token integration (IQAI ATP ERC-20) in backend/src/contracts/atp-token.ts
+- [x] T081 [P] [US3] Implement ATP token integration (IQAI ATP ERC-20) in backend/src/contracts/atp-token.ts
 - [ ] T082 [US3] Add claim and unstake functions to YieldHarvester.sol in contracts/contracts/YieldHarvester.sol
 - [ ] T083 [US3] Redeploy updated contracts to Polygon mainnet
 
 #### Integration & Validation
 
-- [ ] T084 [US3] Integrate ClaimUnstakeActions with backend claim/unstake endpoints
-- [ ] T085 [US3] Integrate TransactionHistory with GET /transactions endpoint
+- [x] T084 [US3] Integrate ClaimUnstakeActions with backend claim/unstake endpoints
+- [x] T085 [US3] Integrate TransactionHistory with GET /transactions endpoint
 - [ ] T086 [US3] Test claim flow updates reward balance and logs transaction
 - [ ] T087 [US3] Test unstake flow closes position and withdraws funds on-chain
 
