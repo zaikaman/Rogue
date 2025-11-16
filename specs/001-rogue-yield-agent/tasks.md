@@ -23,16 +23,16 @@ description: "Task list for Rogue Autonomous DeFi Yield Optimization Agent imple
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create project structure per implementation plan (frontend/, backend/, contracts/, .specify/)
-- [ ] T002 Initialize frontend project with Vite + React 18 + TypeScript in frontend/package.json
-- [ ] T003 [P] Initialize backend project with Node.js 18 + Express + TypeScript in backend/package.json
-- [ ] T004 [P] Initialize smart contracts project with Hardhat in contracts/package.json
-- [ ] T005 [P] Configure ESLint and Prettier for frontend in frontend/.eslintrc.json
-- [ ] T006 [P] Configure ESLint and Prettier for backend in backend/.eslintrc.json
-- [ ] T007 [P] Configure solhint for smart contracts in contracts/.solhintrc.json
-- [ ] T008 [P] Setup Tailwind CSS in frontend/tailwind.config.js
-- [ ] T009 [P] Create .env.example files for frontend, backend, and contracts with required API keys
-- [ ] T010 [P] Setup .gitignore for Node.js, environment files, and build artifacts
+- [x] T001 Create project structure per implementation plan (frontend/, backend/, contracts/, .specify/)
+- [x] T002 Initialize frontend project with Vite + React 18 + TypeScript in frontend/package.json
+- [x] T003 [P] Initialize backend project with Node.js 18 + Express + TypeScript in backend/package.json
+- [x] T004 [P] Initialize smart contracts project with Hardhat in contracts/package.json
+- [x] T005 [P] Configure ESLint and Prettier for frontend in frontend/.eslintrc.json
+- [x] T006 [P] Configure ESLint and Prettier for backend in backend/.eslintrc.json
+- [x] T007 [P] Configure solhint for smart contracts in contracts/.solhintrc.json
+- [x] T008 [P] Setup Tailwind CSS in frontend/tailwind.config.js
+ - [x] T009 [P] Create `.env.example` files for frontend, backend, and contracts with required API keys (backend `.env` must include `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `OPEN_AI_MODEL`)
+- [x] T010 [P] Setup .gitignore for Node.js, environment files, and build artifacts
 
 ---
 
@@ -42,21 +42,21 @@ description: "Task list for Rogue Autonomous DeFi Yield Optimization Agent imple
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T011 Setup Supabase PostgreSQL database and create initial schema in backend/src/db/schema.sql
-- [ ] T012 [P] Configure Supabase client with Row Level Security in backend/src/services/supabase.ts
-- [ ] T013 [P] Setup Alchemy RPC provider configuration in backend/src/utils/rpc.ts
-- [ ] T014 [P] Implement wallet signature verification middleware in backend/src/middleware/auth.ts
-- [ ] T015 [P] Implement error handling middleware in backend/src/middleware/error.ts
-- [ ] T016 [P] Setup structured logging utility in backend/src/utils/logger.ts
-- [ ] T017 [P] Configure Vercel deployment settings in backend/vercel.json
-- [ ] T018 [P] Setup RainbowKit wallet connection in frontend/src/components/WalletConnect.tsx
-- [ ] T019 [P] Create ethers.js wallet utilities in frontend/src/services/wallet.ts
-- [ ] T020 [P] Setup ADK-TS application framework in backend/src/app.ts
-- [ ] T021 [P] Configure OpenAI SDK client in backend/src/utils/openai.ts
-- [ ] T022 [P] Setup environment configuration management in backend/src/utils/constants.ts
-- [ ] T023 Configure mainnet token addresses (USDC, WMATIC) in backend/src/utils/constants.ts
-- [ ] T024 [P] Configure Chainlink oracle addresses for Polygon mainnet in backend/src/utils/constants.ts
-- [ ] T025 Setup Hardhat deployment scripts for Polygon mainnet in contracts/scripts/deploy.ts
+- [x] T011 Setup Supabase PostgreSQL database and create initial schema in backend/src/db/schema.sql
+- [x] T012 [P] Configure Supabase client with Row Level Security in backend/src/services/supabase.ts
+- [x] T013 [P] Setup Alchemy RPC provider configuration in backend/src/utils/rpc.ts
+- [x] T014 [P] Implement wallet signature verification middleware in backend/src/middleware/auth.ts
+- [x] T015 [P] Implement error handling middleware in backend/src/middleware/error.ts
+- [x] T016 [P] Setup structured logging utility in backend/src/utils/logger.ts
+- [x] T017 [P] Configure Vercel deployment settings in backend/vercel.json
+- [x] T018 [P] Setup RainbowKit wallet connection in frontend/src/components/WalletConnect.tsx
+- [x] T019 [P] Create ethers.js wallet utilities in frontend/src/services/wallet.ts
+- [x] T020 [P] Setup ADK-TS application framework in backend/src/app.ts
+- [x] T021 [P] Configure OpenAI SDK client in `backend/src/utils/openai.ts` to read `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `OPEN_AI_MODEL` from `backend/.env`
+- [x] T022 [P] Setup environment configuration management in `backend/src/utils/constants.ts` to expose `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `OPEN_AI_MODEL` for application use
+- [x] T023 Configure mainnet token addresses (USDC, WMATIC) in backend/src/utils/constants.ts
+- [x] T024 [P] Configure Chainlink oracle addresses for Polygon mainnet in backend/src/utils/constants.ts
+- [x] T025 Setup Hardhat deployment scripts for Polygon mainnet in contracts/scripts/deploy.ts
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
