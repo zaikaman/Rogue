@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { config, validateConfig } from './utils/constants.js';
 import { logger } from './utils/logger.js';
 import { errorHandler, notFoundHandler } from './middleware/error.js';
+import { configureADK } from './config/adk-setup.js';
 import { initializeADK } from './app.js';
 import { initializeCronJobs, stopCronJobs } from './cron/index.js';
 import positionsRouter from './api/positions.js';
@@ -66,6 +67,9 @@ async function startServer() {
     // Validate environment configuration
     validateConfig();
     logger.info('Environment configuration validated');
+
+    // Configure ADK-TS with custom OpenAI settings
+    configureADK();
 
     // Initialize ADK-TS framework
     initializeADK();

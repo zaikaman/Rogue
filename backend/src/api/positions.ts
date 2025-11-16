@@ -94,8 +94,8 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     if (error instanceof z.ZodError) {
       return res.status(400).json({
         error: 'Validation error',
-        message: error.errors[0].message,
-        details: error.errors
+        message: error.issues[0].message,
+        details: error.issues
       });
     }
     return next(error);
@@ -302,8 +302,8 @@ router.patch('/:id/allocations', async (req: Request, res: Response, next: NextF
     if (error instanceof z.ZodError) {
       return res.status(400).json({
         error: 'Validation error',
-        message: error.errors[0].message,
-        details: error.errors
+        message: error.issues[0].message,
+        details: error.issues
       });
     }
     return next(error);
