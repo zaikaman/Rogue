@@ -1,50 +1,93 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+	Sync Impact Report
+	- Version change: unspecified -> 1.0.0
+	- Modified principles: placeholder template -> Code Quality; User Experience Consistency; Performance & Efficiency
+	- Added sections: Development Workflow aligned with 'no CI/tests' preference
+	- Removed/De-emphasized: Test-first/mandatory CI requirement from templates
+	- Templates updated: .specify/templates/spec-template.md ✅, .specify/templates/plan-template.md ✅,
+											.specify/templates/tasks-template.md ✅, .specify/templates/checklist-template.md ✅,
+											.specify/templates/agent-file-template.md ✅
+	- Follow-up TODOs: RATIFICATION_DATE left as TODO
+-->
+
+# Rogue Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Code Quality (NON-NEGOTIABLE)
+All code delivered to the repository MUST be readable, maintainable, and unambiguous.
+- **Style & Readability**: Code MUST follow the project's established style guide or a documented
+	language-specific style (formatters and linters are RECOMMENDED). Code MUST include clear names
+	and small, focused functions/modules.
+- **Review & Pairing**: All changes MUST be peer-reviewed before merging. Reviews MUST verify
+	conformance to the style guide, absence of obvious correctness bugs, and reasonable complexity.
+- **Static Analysis**: Use of static analysis and lightweight linters is REQUIRED where available.
+	Results SHOULD be reviewed and addressed before merging. Static analysis is preferred over
+	heavyweight test gating when rapid iteration is needed.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+Rationale: High code quality reduces maintenance cost, speeds onboarding, and prevents technical
+debt accumulation while allowing fast iteration without mandatory CI/test gating.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. User Experience Consistency (MUST)
+UX must be consistent across all user-facing surfaces (CLI, API, UI). Consistency includes visual
+language, error semantics, and interaction patterns.
+- **Design Tokens & Patterns**: Adopt and document a minimal set of design tokens or interaction
+	primitives that implementations MUST follow.
+- **Errors & Messaging**: Error messages MUST be actionable and user-focused. APIs/CLI MUST return
+	consistent status and error shapes that are documented in the spec for each feature.
+- **Accessibility & Clarity**: Public interfaces MUST be accessible and predictable; accessibility
+	issues that fundamentally block usage are NOT acceptable.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+Rationale: A consistent UX reduces support burden, increases predictability for integrators and end
+users, and shortens feedback cycles during fast development.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Performance & Efficiency (MUST)
+Every feature MUST declare measurable performance goals in its spec: target latency percentiles,
+throughput, and resource budgets (memory/disk). Performance goals are non-negotiable acceptance
+criteria for feature completion.
+- **Measurable Targets**: Include explicit metrics, e.g., "p95 < 200ms under X workload" or
+	"memory < 100MB RSS for process Y". Goals MUST use clear units and testable thresholds.
+- **Performance Budgeting**: Features MUST include a performance budget and explain how regression
+	will be detected and mitigated during development.
+- **Profiling & Optimization**: Developers MUST profile when approaching budgets and document
+	optimizations and trade-offs in the feature plan.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Rationale: Declared and measurable performance expectations ensure the app remains usable at scale
+and guide pragmatic optimization efforts during rapid development.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Constraints & Development Expectations
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+- **No Mandatory Tests/CI**: Tests and CI/CD workflows are OPTIONAL for this project by design to
+	enable faster iteration. Where tests are used, they MUST be documented in the feature spec and
+	understood as developer-maintained artifacts rather than governance blockers.
+- **Minimum Tooling**: Projects SHOULD use linters and formatters to preserve readability; heavy
+	CI enforcement is NOT required.
+- **Documentation**: Each feature MUST include a short `quickstart.md` describing manual verification
+	and any required runtime steps for reviewers and testers.
+- **Small, Focused Changes**: Pull requests SHOULD be small and focused; large refactors MUST include
+	an implementation plan and staged migration approach.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Development Workflow
+
+- **Branching & PRs**: Use short-lived branches. PRs MUST include a short summary of behavior changes,
+	performance implications, and a manual verification checklist.
+- **Manual Smoke Validation**: Before merging, the author MUST perform and document a quick manual
+	smoke validation (steps in `quickstart.md`). Automated CI is optional but acceptable if set up.
+- **Release Notes & Rollback**: Releases MUST include a short note on performance impact and
+	behavioral changes. Rollback steps MUST be documented for risky changes.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+- **Amendments**: Amendments to this constitution MUST be proposed in a PR titled "amend: constitution"
+	and include a rationale, migration plan (if applicable), and a simple approval record (at least
+	two maintainers' sign-off). Minor wording edits that do not change intent MAY be accepted with a
+	single maintainer approval.
+- **Versioning Policy**:
+	- **MAJOR** version when a principle is removed or its intent is redefined (breaking governance).
+	- **MINOR** version when a new principle or mandatory section is added.
+	- **PATCH** version for clarifications, typos, or non-substantive rewording.
+- **Compliance Reviews**: Feature specs MUST include a short "Constitution Check" section documenting
+	how the feature meets: Code Quality, UX Consistency, and Performance. Maintainters MAY request
+	additional justification for exceptions.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE) | **Last Amended**: 2025-11-16

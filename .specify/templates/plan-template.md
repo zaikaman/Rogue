@@ -29,7 +29,9 @@
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+*GATE: Feature authors MUST document how the plan meets the constitution's mandatory
+principles (Code Quality, UX Consistency, Performance). This is a lightweight check and does
+not require automated tests or CI enforcement. Maintainters MAY request clarifications.*
 
 [Gates determined based on constitution file]
 

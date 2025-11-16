@@ -20,6 +20,10 @@ Auto-generated from all feature plans. Last updated: [DATE]
 
 [LANGUAGE-SPECIFIC, ONLY FOR LANGUAGES IN USE]
 
+- **Testing & CI**: This project treats tests and CI as optional developer tools. If a language
+	ecosystem or maintainer adds CI, document its scope and maintenance plan here. CI is NOT
+	required by default.
+
 ## Recent Changes
 
 [LAST 3 FEATURES AND WHAT THEY ADDED]
