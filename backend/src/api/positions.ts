@@ -1,7 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import { getSupabaseClient } from '../services/supabase';
-import { verifyWalletSignature } from '../middleware/auth';
 import logger from '../utils/logger';
 import { unstakeTokens } from '../contracts/staking-proxy';
 import { claimRewards as claimRewardsContract, withdrawFromProtocol } from '../contracts/yield-harvester';
@@ -36,8 +35,8 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     const { walletAddress, token, amount, riskProfile, signature, message } = validatedData;
 
     // Verify wallet signature
-    const isValid = verifyWalletSignature(message, signature, walletAddress);
-    if (!isValid) {
+    const recoveredAddress = ethers.verifyMessage(message, signature);
+    if (recoveredAddress.toLowerCase() !== walletAddress.toLowerCase()) {
       return res.status(401).json({
         error: 'Invalid signature',
         message: 'Wallet signature verification failed'
@@ -99,7 +98,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
         details: error.errors
       });
     }
-    next(error);
+    return next(error);
   }
 });
 
@@ -166,7 +165,7 @@ router.get('/:walletAddress', async (req: Request, res: Response, next: NextFunc
       }))
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -228,7 +227,7 @@ router.get('/detail/:id', async (req: Request, res: Response, next: NextFunction
       }
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -307,7 +306,7 @@ router.patch('/:id/allocations', async (req: Request, res: Response, next: NextF
         details: error.errors
       });
     }
-    next(error);
+    return next(error);
   }
 });
 
@@ -446,7 +445,7 @@ router.post('/:id/unstake', async (req: Request, res: Response, next: NextFuncti
       });
     }
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -463,7 +462,7 @@ router.post('/:id/claim', async (req: Request, res: Response, next: NextFunction
     // Check if position exists
     const { data: position, error: fetchError } = await supabase
       .from('positions')
-      .select('id, wallet_address, status, amount, created_at')
+      .select('id, wallet_address, status, amount, created_at, risk_profile')
       .eq('id', id)
       .single();
 
@@ -586,7 +585,7 @@ router.post('/:id/claim', async (req: Request, res: Response, next: NextFunction
       });
     }
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -641,7 +640,7 @@ router.patch('/:id/allocations', async (req: Request, res: Response, next: NextF
       allocations
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 

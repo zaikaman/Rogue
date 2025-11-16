@@ -10,7 +10,7 @@ interface ClaimUnstakeActionsProps {
 }
 
 export default function ClaimUnstakeActions({
-  positionId,
+  positionId: _positionId,
   onClaim,
   onUnstake,
   canClaim = true,

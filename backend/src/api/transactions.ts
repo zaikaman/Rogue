@@ -74,7 +74,7 @@ router.get('/:walletAddress', async (req: Request, res: Response, next: NextFunc
       }
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -130,7 +130,7 @@ router.get('/position/:positionId', async (req: Request, res: Response, next: Ne
       }
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -161,7 +161,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     // Verify position exists
     const { data: position, error: posError } = await supabase
       .from('positions')
-      .select('id')
+      .select('id, wallet_address')
       .eq('id', positionId)
       .single();
 
@@ -216,7 +216,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
       }
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -278,7 +278,7 @@ router.patch('/:txHash/status', async (req: Request, res: Response, next: NextFu
       }
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 

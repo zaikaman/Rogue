@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import { compoundPositionWorkflow } from '../workflows/yield-optimization';
-import { supabase } from '../services/supabase';
+import { getSupabaseClient } from '../services/supabase';
 import { getChainlinkPrice } from '../services/chainlink-oracle';
 import logger from '../utils/logger';
 
@@ -50,7 +50,13 @@ async function estimatePositionYield(position: any): Promise<number> {
 async function isCompoundProfitable(yieldValueUSD: number): Promise<boolean> {
   try {
     // Get current MATIC price
-    const maticPrice = await getChainlinkPrice('MATIC', 'moderate');
+    const maticPriceData = await getChainlinkPrice('MATIC', 'moderate');
+    if (!maticPriceData) {
+      logger.warn('Could not get MATIC price, skipping profitability check');
+      return false;
+    }
+    
+    const maticPrice = parseFloat(maticPriceData.price);
     
     // Estimate gas cost (compound tx ~200k gas, high gas price ~100 gwei on Polygon)
     const gasUnits = 200000;
@@ -81,6 +87,8 @@ async function compoundEligiblePositions() {
   logger.info('🔄 Starting autonomous compound job...');
 
   try {
+    const supabase = getSupabaseClient();
+    
     // Fetch active positions
     const { data: positions, error } = await supabase
       .from('positions')
@@ -160,27 +168,21 @@ async function compoundEligiblePositions() {
           hoursSinceLastCompound: hoursSince.toFixed(1)
         });
 
-        const result = await compoundPositionWorkflow({
-          positionId: position.id,
-          walletAddress: position.wallet_address
-        });
+        const result: any = await compoundPositionWorkflow(position.id);
 
         if (result.success) {
+          
           // Update last compound timestamp
           await supabase
             .from('positions')
             .update({
               last_compound_at: new Date().toISOString(),
-              total_value: result.newTotalValue || position.total_value,
               updated_at: new Date().toISOString()
             })
             .eq('id', position.id);
 
           compoundedCount++;
-          logger.info(`✅ Successfully compounded position ${position.id}`, {
-            actualYield: result.yieldAmount,
-            newValue: result.newTotalValue
-          });
+          logger.info(`✅ Successfully compounded position ${position.id}`);
         } else {
           logger.warn(`Compound failed for position ${position.id}`, { error: result.error });
           errorCount++;
@@ -205,7 +207,8 @@ async function compoundEligiblePositions() {
     });
 
     // Record job metrics
-    await supabase.from('cron_logs').insert({
+    const supabaseLog = getSupabaseClient();
+    await supabaseLog.from('cron_logs').insert({
       job_name: 'autonomous-compound',
       status: errorCount === 0 ? 'success' : 'partial_failure',
       positions_checked: checkedCount,
@@ -219,7 +222,8 @@ async function compoundEligiblePositions() {
   } catch (error: any) {
     logger.error('Autonomous compound job failed', { error: error.message });
     
-    await supabase.from('cron_logs').insert({
+    const supabaseErr = getSupabaseClient();
+    await supabaseErr.from('cron_logs').insert({
       job_name: 'autonomous-compound',
       status: 'error',
       error_message: error.message,

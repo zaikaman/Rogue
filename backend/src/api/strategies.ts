@@ -58,7 +58,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       }))
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -104,7 +104,7 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
       }
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -190,7 +190,7 @@ router.get('/recommend/:walletAddress', async (req: Request, res: Response, next
       }
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 

@@ -49,3 +49,4 @@ typechain-types/
 .cache
 temp/
 tmp/
+adk-ts

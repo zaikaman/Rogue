@@ -104,7 +104,7 @@ export async function getChainlinkPrice(
     const priceFeed = new ethers.Contract(feedAddress, AGGREGATOR_V3_INTERFACE_ABI, provider);
 
     // Get latest round data
-    const [roundId, answer, startedAt, updatedAt, answeredInRound] = await priceFeed.latestRoundData();
+    const [roundId, answer, _startedAt, updatedAt, answeredInRound] = await priceFeed.latestRoundData();
 
     // Get decimals for price normalization
     const decimals = await priceFeed.decimals();
