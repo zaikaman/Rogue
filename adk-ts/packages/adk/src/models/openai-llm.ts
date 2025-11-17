@@ -629,17 +629,12 @@ export class OpenAiLlm extends BaseLlm {
 				);
 			}
 
-			const config: any = {
+			const baseURL = process.env.OPENAI_BASE_URL;
+
+			this._client = new OpenAI({
 				apiKey,
-			};
-
-			// Support custom base URL for OpenAI-compatible services
-			// Examples: Azure OpenAI, Ollama, LM Studio, etc.
-			if (process.env.OPENAI_BASE_URL) {
-				config.baseURL = process.env.OPENAI_BASE_URL;
-			}
-
-			this._client = new OpenAI(config);
+				...(baseURL && { baseURL }),
+			});
 		}
 		return this._client;
 	}
