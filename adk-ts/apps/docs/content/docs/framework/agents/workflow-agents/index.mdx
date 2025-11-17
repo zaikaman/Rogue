@@ -1,0 +1,179 @@
+---
+title: Workflow Agents
+description: Orchestrate multiple agents with predictable execution patterns
+---
+
+import { Cards, Card } from "fumadocs-ui/components/card";
+import { Callout } from "fumadocs-ui/components/callout";
+
+Workflow agents orchestrate multiple agents to solve complex problems that require coordination, parallel processing, or iterative refinement. Think of them as the conductors of your agent orchestra - they don't generate content themselves, but control how and when other agents execute.
+
+Unlike [LLM Agents](/docs/framework/agents/llm-agents) that use language models for reasoning, workflow agents operate with deterministic logic to ensure predictable, reliable execution patterns. This makes them perfect for building robust multi-step processes where you need guaranteed execution order and consistent results.
+
+<Callout type="info" title="Workflow vs LLM Agents">
+  **Workflow Agents** manage execution flow with predictable patterns
+  (sequential → parallel → loop → LangGraph).
+  <br />
+  **LLM Agents** use language models for dynamic reasoning and content
+  generation.
+  <br />
+  **Best together:** Use workflow agents to orchestrate LLM agents for complex,
+  multi-step processes.
+</Callout>
+
+## Workflow Types
+
+<Cards>
+  <Card
+    title="Sequential Agent"
+    description="Execute agents one after another in a specific order"
+    href="/docs/framework/agents/workflow-agents/sequential-agents"
+  />
+  <Card
+    title="Parallel Agent"
+    description="Run multiple agents simultaneously for faster processing"
+    href="/docs/framework/agents/workflow-agents/parallel-agents"
+  />
+  
+  <Card
+    title="Loop Agent"
+    description="Repeat agent execution until conditions are met"
+    href="/docs/framework/agents/workflow-agents/loop-agents"
+  />
+
+  <Card
+    title="LangGraph Agent"
+    description="Complex workflows with conditional branching and dynamic routing"
+    href="/docs/framework/agents/workflow-agents/langgraph-agents"
+  />
+</Cards>
+
+## Key Benefits
+
+Workflow agents solve real problems that single agents can't handle effectively:
+
+**🔄 Reliable Process Control**  
+Guarantee execution order and patterns without relying on LLM decision-making. Perfect for production workflows where consistency matters.
+
+**⚡ Performance Optimization**  
+Run independent tasks in parallel or iterate until quality standards are met. Scale processing power where it's needed most.
+
+**🧩 Composable Complexity**  
+Break complex problems into manageable steps. Each sub-agent can focus on what it does best while the workflow manages coordination.
+
+**🎯 Specialized Orchestration**  
+Combine different agent types - use LLM agents for reasoning, tool agents for actions, and workflow agents for coordination.
+
+## Quick Start Example
+
+Here's a content creation pipeline that writes, edits, and fact-checks articles:
+
+```typescript
+import { LlmAgent, SequentialAgent } from "@iqai/adk";
+
+// Create specialized agents for each step
+const writer = new LlmAgent({
+  name: "content-writer",
+  model: "gemini-2.5-flash",
+  instruction: "Write engaging, informative articles on the given topic.",
+});
+
+const editor = new LlmAgent({
+  name: "copy-editor",
+  model: "gemini-2.5-flash",
+  instruction:
+    "Edit for clarity, grammar, and style. Maintain the original voice.",
+});
+
+const factChecker = new LlmAgent({
+  name: "fact-checker",
+  model: "gemini-2.5-flash",
+  instruction: "Verify claims and flag anything that needs sources.",
+  tools: [new WebSearchTool()], // Can use tools for research
+});
+
+// Sequential workflow: write → edit → fact-check
+const contentPipeline = new SequentialAgent({
+  name: "content-pipeline",
+  description: "End-to-end content creation with quality controls",
+  subAgents: [writer, editor, factChecker],
+});
+
+// Use it
+const result = await contentPipeline.run({
+  message: "Write about the benefits of renewable energy",
+});
+```
+
+## Choosing the Right Workflow Type
+
+Each workflow type solves different coordination challenges:
+
+### Sequential Agents
+
+**When to use:** Steps must happen in order, each building on the previous result  
+**Perfect for:** Content pipelines, data processing chains, quality assurance workflows  
+**Example:** Research → Analysis → Report → Review
+
+### Parallel Agents
+
+**When to use:** Tasks are independent and can run simultaneously  
+**Perfect for:** Multi-perspective analysis, concurrent data processing, distributed tasks  
+**Example:** Sentiment analysis + Topic extraction + Summary generation
+
+### Loop Agents
+
+**When to use:** Need iterative refinement or retry logic until conditions are met  
+**Perfect for:** Problem solving, quality improvement, progressive enhancement  
+**Example:** Code generation → Testing → Fixes → Repeat until tests pass
+
+### LangGraph Agents
+
+**When to use:** Complex workflows with conditional branching, dynamic routing, or state-dependent decisions  
+**Perfect for:** Advanced orchestration, decision trees, adaptive workflows, multi-path processing  
+**Example:** Customer support routing → Escalation logic → Specialized handlers based on issue type
+
+<Callout type="info" title="Pro Tip: Combine Workflow Types">
+  You can nest workflow agents! Create a sequential pipeline where one step is a
+  parallel workflow, or use loops within larger sequential processes. This gives
+  you powerful composition capabilities.
+</Callout>
+
+## Common Patterns
+
+**Content Creation Pipeline**  
+Sequential: Research → Write → Edit → Fact-check → Publish
+
+**Multi-Source Analysis**  
+Parallel: Process documents simultaneously → Aggregate insights
+
+**Iterative Problem Solving**  
+Loop: Generate solution → Test → Refine → Repeat until satisfactory
+
+**Quality Assurance**  
+Sequential + Parallel: Parallel checks (grammar, facts, style) → Sequential approval workflow
+
+**Dynamic Decision Making**  
+LangGraph: Customer inquiry → Route by type → Specialized handlers → Escalation logic → Resolution
+
+## Related Topics
+
+<Cards>
+  <Card
+    title="🤖 LLM Agents"
+    description="The building blocks that workflow agents orchestrate"
+    href="/docs/framework/agents/llm-agents"
+  />
+  
+  <Card
+    title="🏗️ Agent Builder"
+    description="Fluent API for creating workflow agents quickly"
+    href="/docs/framework/agents/agent-builder"
+  />
+
+  <Card
+    title="🧠 Sessions & Memory"
+    description="How agents share state and data in workflows"
+    href="/docs/framework/sessions"
+  />
+</Cards>

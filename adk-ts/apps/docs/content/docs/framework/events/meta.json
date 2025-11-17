@@ -1,0 +1,12 @@
+{
+	"title": "Events",
+	"icon": "Bell",
+	"pages": [
+		"index",
+		"event-actions",
+		"working-with-events",
+		"compaction",
+		"streaming",
+		"patterns"
+	]
+}

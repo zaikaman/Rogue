@@ -1,0 +1,6 @@
+packages:
+  - 'apps/docs'
+  - 'apps/examples'
+  - 'packages/*'
+  - 'apps/adk-web'
+minimumReleaseAge: 1440

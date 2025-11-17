@@ -1,0 +1,209 @@
+---
+title: Parallel Agents
+description: Run multiple agents simultaneously for faster processing
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+import { Cards, Card } from "fumadocs-ui/components/card";
+
+Parallel agents unleash the power of concurrent processing, running multiple agents simultaneously to tackle independent tasks. Think of it as your AI team working in parallel - while one agent analyzes sentiment, another extracts topics, and a third generates summaries, all at the same time.
+
+Unlike [sequential agents](/docs/framework/agents/workflow-agents/sequential-agents) that process step-by-step, parallel agents maximize speed and efficiency by utilizing multiple processing streams. Perfect when you have independent tasks that don't need to wait for each other.
+
+<Callout type="info" title="Speed Through Parallelism">
+  - **Key benefit:** Process multiple independent tasks simultaneously instead of waiting for each one to finish.
+  - **Performance boost:** 3 tasks that take 10 seconds each = 10 seconds total (not 30!)
+</Callout>
+
+## Quick Start Example
+
+Here's a content analysis system that simultaneously examines multiple aspects of user feedback:
+
+```typescript
+import { LlmAgent, ParallelAgent, WebSearchTool } from "@iqai/adk";
+
+// Parallel analysis: Multiple perspectives on the same content
+const sentimentAnalyzer = new LlmAgent({
+  name: "sentiment-analyzer",
+  model: "gemini-2.5-flash",
+  instruction: `
+    Analyze the sentiment of the given text. Provide:
+    - Overall sentiment (positive/negative/neutral)
+    - Confidence score (0-1)
+    - Key emotional indicators
+    - Tone analysis (formal, casual, frustrated, etc.)
+  `,
+  outputKey: "sentiment_analysis",
+});
+
+const topicExtractor = new LlmAgent({
+  name: "topic-extractor",
+  model: "gemini-2.5-flash",
+  instruction: `
+    Extract key topics and themes from the text:
+    - Main topics discussed
+    - Product/feature mentions
+    - Categories and tags
+    - Intent classification (complaint, praise, question, etc.)
+  `,
+  outputKey: "topics",
+});
+
+const priorityAssessor = new LlmAgent({
+  name: "priority-assessor",
+  model: "gemini-2.5-flash",
+  instruction: `
+    Assess the urgency and priority of this feedback:
+    - Priority level (high/medium/low)
+    - Urgency indicators
+    - Business impact assessment
+    - Recommended response timeframe
+  `,
+  outputKey: "priority_assessment",
+});
+
+const keywordAnalyzer = new LlmAgent({
+  name: "keyword-analyzer",
+  model: "gemini-2.5-flash",
+  instruction: `
+    Extract important keywords and phrases:
+    - Key terms and phrases
+    - Brand/competitor mentions
+    - Technical terms
+    - Action items mentioned
+  `,
+  outputKey: "keywords",
+});
+
+// All agents run simultaneously on the same input
+const feedbackAnalyzer = new ParallelAgent({
+  name: "feedback-analyzer",
+  description: "Multi-perspective analysis of customer feedback",
+  subAgents: [
+    sentimentAnalyzer,
+    topicExtractor,
+    priorityAssessor,
+    keywordAnalyzer,
+  ],
+});
+
+// Usage: Get comprehensive analysis in parallel
+const analysis = await feedbackAnalyzer.run({
+  message:
+    "The new checkout process is confusing and I can't complete my purchase!",
+});
+// Results available at: analysis.sentiment_analysis, analysis.topics, analysis.priority_assessment, analysis.keywords
+```
+
+### Visual Flow
+
+<Mermaid
+  chart="
+flowchart TD
+  U[User or Upstream] --> P[ParallelAgent]
+  P --> A[Agent A]
+  P --> B[Agent B]
+  P --> C[Agent C]
+  A -. writes state: a_key .-> P
+  B -. writes state: b_key .-> P
+  C -. writes state: c_key .-> P
+  P --> G[Gather/Synthesize]
+  G -. reads a_key,b_key,c_key .-> P
+"
+/>
+
+## How Parallel Processing Works
+
+Parallel agents maximize efficiency by running all sub-agents simultaneously:
+
+**⚡ Concurrent Execution**
+
+1. **All agents start together** - No waiting for previous agents to finish
+2. **Independent processing** - Each agent works on the same input independently
+3. **Simultaneous completion** - Results become available as each agent finishes
+4. **Non-deterministic order** - Faster agents finish first, slower ones catch up
+
+**📊 Performance Benefits**
+
+- **Time savings:** N agents running for T seconds = T total time (not N×T)
+- **Resource utilization:** Maximizes CPU/GPU usage across multiple agents
+- **Scalability:** Add more agents without increasing total processing time
+
+**🔄 Result Aggregation**
+Each agent writes to unique keys in shared session state. Later agents (or your application) can access all results together for final processing.
+
+<Callout type="info" title="State Management">
+  Use unique `outputKey` values for each agent to prevent conflicts. Results are
+  available immediately as each agent completes - perfect for real-time updates!
+</Callout>
+
+## Real-World Use Cases
+
+**📝 Multi-Perspective Content Analysis**  
+Sentiment + Topics + Keywords + Priority Assessment (all simultaneously)
+
+**🔍 Comprehensive Research**  
+Web Search + Academic Papers + News + Social Media (parallel data gathering)
+
+**📊 Financial Analysis**  
+Technical Analysis + Fundamental Analysis + News Sentiment + Risk Assessment
+
+**🛠️ Quality Assurance**  
+Grammar Check + Fact Verification + Style Review + Compliance Check
+
+**🌍 Multi-Language Processing**  
+Translation + Sentiment + Cultural Context + Localization (per language)
+
+**📊 Data Validation**  
+Format Check + Business Rules + Data Quality + Duplicate Detection
+
+## When to Choose Parallel Agents
+
+<Callout type="success" title="Perfect For Independent Tasks">
+  - **Use when:** Tasks don't depend on each other's results during execution
+  - **Benefit:** Dramatic speed improvements through simultaneous processing
+</Callout>
+
+### ✅ Choose Parallel When:
+
+- **Independent analysis** - Multiple perspectives on the same data
+- **Speed is critical** - Need results as fast as possible
+- **Resource optimization** - Want to maximize processing power
+- **Multi-source data** - Gathering from different sources simultaneously
+- **Comparative analysis** - Need multiple approaches to the same problem
+
+### ❌ Don't Use Parallel When:
+
+- Tasks depend on each other's intermediate results
+- You need guaranteed execution order
+- Sequential processing is part of the business logic
+- Resource constraints limit concurrent execution
+- Results from one agent affect how another should process
+
+## Related Topics
+
+<Cards>
+  <Card
+    title="🔄 Sequential Agents"
+    description="Step-by-step processing when order and dependencies matter"
+    href="/docs/framework/agents/workflow-agents/sequential-agents"
+  />
+
+  <Card
+    title="🔁 Loop Agents"
+    description="Iterative processing with retry logic and refinement"
+    href="/docs/framework/agents/workflow-agents/loop-agents"
+  />
+
+  <Card
+    title="🏗️ Agent Builder"
+    description="Fluent API for creating parallel workflows with asParallel()"
+    href="/docs/framework/agents/agent-builder"
+  />
+  
+  <Card
+    title="🤖 LLM Agents"
+    description="Individual agents that power parallel processing workflows"
+    href="/docs/framework/agents/llm-agents"
+  />
+</Cards>

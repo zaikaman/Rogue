@@ -1,0 +1,14 @@
+{
+	"extends": "@iqai/tsconfig/module.json",
+	"main": "./src/index.ts",
+	"compilerOptions": {
+		"outDir": "dist",
+		"rootDir": ".",
+		"declaration": true,
+		"paths": {
+			"@adk/*": ["./src/*"]
+		},
+		"types": ["node", "vitest/globals"]
+	},
+	"include": ["src", "tests", "../../apps/examples/src/zod-schema-example"]
+}

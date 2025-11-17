@@ -1,0 +1,32 @@
+name: Push checks
+
+on: [push]
+
+jobs:
+  Checkout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.0.0
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Ensure Rollup native dependencies are installed
+        run: |
+          cd packages/adk
+          pnpm add @rollup/rollup-linux-x64-gnu --save-optional || true
+      - name: Biome Lint Check
+        run: pnpm lint-staged
+      - name: ADK tests
+        run: pnpm test
+        working-directory: ./packages/adk
