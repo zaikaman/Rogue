@@ -1,39 +1,48 @@
 import { initializeAutonomousScan } from './autonomous-scan';
 import { initializeAutonomousCompound } from './autonomous-compound';
+import { initializeCronJobs as initializeEnhancedCronJobs } from './autonomous-jobs';
 import logger from '../utils/logger';
 
 /**
  * Central cron job manager
  * 
  * Initializes and manages all autonomous background jobs:
- * - Market scanning & rebalancing
- * - Yield compounding
+ * - Enhanced multi-agent market scanning
+ * - Hourly yield optimization
+ * - Quarterly rebalancing
+ * - Volatility monitoring
+ * - Auto-compounding
  */
 
 export function initializeCronJobs() {
   logger.info('⏰ Initializing autonomous cron jobs...');
 
+  // Initialize enhanced cron jobs (new system)
+  if (process.env.ENABLE_ENHANCED_JOBS !== 'false') {
+    try {
+      initializeEnhancedCronJobs();
+      logger.info('✅ Enhanced autonomous jobs initialized');
+    } catch (error: any) {
+      logger.error('Failed to initialize enhanced jobs', { error: error.message });
+    }
+  }
+
+  // Keep legacy jobs if needed for compatibility
   const jobs = [];
 
-  // Initialize market scanning job
-  if (process.env.ENABLE_AUTONOMOUS_SCAN !== 'false') {
+  if (process.env.ENABLE_LEGACY_SCAN === 'true') {
     const scanJob = initializeAutonomousScan();
     jobs.push({ name: 'autonomous-scan', task: scanJob });
-    logger.info('✅ Autonomous scan job initialized');
-  } else {
-    logger.info('⏭️ Autonomous scan job disabled');
+    logger.info('✅ Legacy autonomous scan job initialized');
   }
 
-  // Initialize compounding job
-  if (process.env.ENABLE_AUTONOMOUS_COMPOUND !== 'false') {
+  if (process.env.ENABLE_LEGACY_COMPOUND === 'true') {
     const compoundJob = initializeAutonomousCompound();
     jobs.push({ name: 'autonomous-compound', task: compoundJob });
-    logger.info('✅ Autonomous compound job initialized');
-  } else {
-    logger.info('⏭️ Autonomous compound job disabled');
+    logger.info('✅ Legacy autonomous compound job initialized');
   }
 
-  logger.info(`🎯 ${jobs.length} cron jobs active`);
+  logger.info(`🎯 Enhanced cron system active with ${jobs.length} legacy jobs`);
 
   return jobs;
 }

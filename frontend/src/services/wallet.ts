@@ -94,18 +94,18 @@ export function formatAddress(address: string): string {
 }
 
 /**
- * Check if connected to Polygon mainnet
+ * Check if connected to Polygon Amoy testnet
  */
-export async function isPolygonMainnet(): Promise<boolean> {
+export async function isPolygonAmoy(): Promise<boolean> {
   const provider = await getProvider();
   const network = await provider.getNetwork();
-  return network.chainId === 137n;
+  return network.chainId === 80002n;
 }
 
 /**
- * Switch to Polygon mainnet
+ * Switch to Polygon Amoy testnet
  */
-export async function switchToPolygon(): Promise<void> {
+export async function switchToPolygonAmoy(): Promise<void> {
   if (!window.ethereum) {
     throw new Error('No Ethereum wallet found');
   }
@@ -113,7 +113,7 @@ export async function switchToPolygon(): Promise<void> {
   try {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0x89' }], // 137 in hex
+      params: [{ chainId: '0x13882' }], // 80002 in hex
     });
   } catch (error: any) {
     // Chain not added, add it
@@ -122,15 +122,15 @@ export async function switchToPolygon(): Promise<void> {
         method: 'wallet_addEthereumChain',
         params: [
           {
-            chainId: '0x89',
-            chainName: 'Polygon Mainnet',
+            chainId: '0x13882',
+            chainName: 'Polygon Amoy Testnet',
             nativeCurrency: {
-              name: 'MATIC',
-              symbol: 'MATIC',
+              name: 'POL',
+              symbol: 'POL',
               decimals: 18,
             },
-            rpcUrls: ['https://polygon-rpc.com'],
-            blockExplorerUrls: ['https://polygonscan.com'],
+            rpcUrls: ['https://rpc-amoy.polygon.technology'],
+            blockExplorerUrls: ['https://amoy.polygonscan.com'],
           },
         ],
       });
@@ -150,8 +150,8 @@ export const wallet = {
   getContract,
   waitForTransaction,
   formatAddress,
-  isPolygonMainnet,
-  switchToPolygon,
+  isPolygonAmoy,
+  switchToPolygonAmoy,
 };
 
 export default wallet;

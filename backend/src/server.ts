@@ -12,6 +12,7 @@ import strategiesRouter from './api/strategies.js';
 import transactionsRouter from './api/transactions.js';
 import healthRouter from './api/health.js';
 import yieldHistoryRouter from './api/yield-history.js';
+import workflowsRouter from './api/workflows.js';
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ app.use('/api/positions', yieldHistoryRouter);
 app.use('/api/strategies', strategiesRouter);
 app.use('/api/transactions', transactionsRouter);
 app.use('/api/health', healthRouter);
+app.use('/api/workflows', workflowsRouter);
 
 // Error handling
 app.use(notFoundHandler);

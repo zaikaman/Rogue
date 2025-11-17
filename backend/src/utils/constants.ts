@@ -32,25 +32,27 @@ export const config = {
   
   // External APIs
   FRAX_API_URL: process.env.FRAX_API_URL || 'https://api.frax.finance',
-  AAVE_SUBGRAPH_URL: process.env.AAVE_SUBGRAPH_URL || 'https://api.thegraph.com/subgraphs/name/aave/protocol-v3-polygon',
+  AAVE_SUBGRAPH_URL: process.env.AAVE_SUBGRAPH_URL || 'https://api.thegraph.com/subgraphs/name/aave/protocol-v3-polygon-amoy',
 };
 
 /**
- * Polygon Mainnet Token Addresses
+ * Polygon Amoy Testnet Token Addresses (ChainID: 80002)
+ * Get testnet tokens from https://faucets.chain.link/polygon-amoy
  */
 export const TOKEN_ADDRESSES = {
-  USDC: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-  WMATIC: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+  USDC: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582', // Amoy testnet USDC
+  WMATIC: '0x360ad4f9a9A8EFe9A8DCB5f461c4Cc1047E1Dcf9', // Amoy testnet WMATIC
   // KRWQ address to be added when available
   KRWQ: process.env.KRWQ_ADDRESS || '',
 };
 
 /**
- * Chainlink Oracle Addresses (Polygon Mainnet)
+ * Chainlink Oracle Addresses (Polygon Amoy Testnet - ChainID: 80002)
+ * Note: POL/USD is the primary feed on Amoy (MATIC rebranded to POL)
  */
 export const CHAINLINK_ORACLES = {
-  USDC_USD: process.env.CHAINLINK_USDC_USD || '0xfE4A8cc5b5B2366C1B58Bea3858e81843581b2F7',
-  MATIC_USD: process.env.CHAINLINK_MATIC_USD || '0xAB594600376Ec9fD91F8e885dADF0CE036862dE0',
+  USDC_USD: process.env.CHAINLINK_USDC_USD || '0x001382149eBa3441043c1c66972b4772963f5D43',
+  MATIC_USD: process.env.CHAINLINK_MATIC_USD || '0x001382149eBa3441043c1c66972b4772963f5D43',
 };
 
 /**

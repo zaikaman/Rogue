@@ -2,7 +2,7 @@
 
 > Set-it-and-forget-it robo-harvester for your crypto yields
 
-Rogue is an autonomous DeFi yield optimizer powered by multi-agent AI that continuously monitors, analyzes, and executes optimal yield strategies on Polygon mainnet.
+Rogue is an autonomous DeFi yield optimizer powered by multi-agent AI that continuously monitors, analyzes, and executes optimal yield strategies on Polygon Amoy testnet.
 
 ## 🏗️ Project Structure
 
@@ -139,7 +139,7 @@ Claim/unstake and rewards
 - **Language**: Solidity 0.8.20
 - **Framework**: Hardhat
 - **Libraries**: OpenZeppelin Contracts v5
-- **Network**: Polygon Mainnet
+- **Network**: Polygon Amoy Testnet (ChainID: 80002)
 - **Standards**: ERC-20, Proxy patterns
 
 ## 🔐 Security Considerations
@@ -182,8 +182,8 @@ npm run format     # Format code with Prettier
 ```bash
 npm run compile    # Compile contracts
 npm run test       # Run tests
-npm run deploy     # Deploy to Polygon mainnet
-npm run verify     # Verify contracts on PolygonScan
+npm run deploy     # Deploy to Polygon Amoy testnet
+npm run verify     # Verify contracts on PolygonScan Amoy
 npm run lint       # Run solhint
 npm run format     # Format Solidity code
 ```
@@ -204,7 +204,7 @@ npm run build
 # Deploy with vercel.json configuration
 ```
 
-### Smart Contracts (Polygon Mainnet)
+### Smart Contracts (Polygon Amoy Testnet)
 ```bash
 cd contracts
 npm run deploy -- --network polygon

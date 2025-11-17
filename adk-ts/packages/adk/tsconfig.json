@@ -1,5 +1,5 @@
 {
-	"extends": "@iqai/tsconfig/module.json",
+	"extends": "../tsconfig/module.json",
 	"main": "./src/index.ts",
 	"compilerOptions": {
 		"outDir": "dist",

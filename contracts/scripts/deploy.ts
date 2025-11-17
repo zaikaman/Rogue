@@ -1,24 +1,24 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  console.log("🚀 Deploying Rogue Yield Optimizer contracts to Polygon...\n");
+  console.log("🚀 Deploying Rogue Yield Optimizer contracts to Polygon Amoy Testnet...\n");
 
   const [deployer] = await ethers.getSigners();
   console.log("Deploying with account:", deployer.address);
   
   const balance = await ethers.provider.getBalance(deployer.address);
-  console.log("Account balance:", ethers.formatEther(balance), "MATIC\n");
+  console.log("Account balance:", ethers.formatEther(balance), "POL\n");
 
   // Check minimum balance for deployment
   const minBalance = ethers.parseEther("0.1");
   if (balance < minBalance) {
     throw new Error(
-      `Insufficient balance. Need at least 0.1 MATIC, have ${ethers.formatEther(balance)} MATIC`
+      `Insufficient balance. Need at least 0.1 POL, have ${ethers.formatEther(balance)} POL`
     );
   }
 
-  // Polygon Mainnet token addresses
-  const USDC_ADDRESS = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"; // USDC on Polygon
+  // Polygon Amoy Testnet token addresses
+  const USDC_ADDRESS = "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582"; // USDC on Polygon Amoy
   const KRWQ_ADDRESS = "0x0000000000000000000000000000000000000000"; // TODO: Replace with actual KRWQ address
 
   // Deploy StakingProxy first (without YieldHarvester address)
@@ -52,8 +52,9 @@ async function main() {
   // Add protocol integrations to YieldHarvester
   console.log("📝 Adding protocol integrations...");
   
-  // Aave v3 Pool on Polygon
-  const AAVE_POOL = "0x794a61358D6845594F94dc1DB02A252b5b4814aD";
+  // Aave v3 Pool on Polygon Amoy Testnet
+  // Note: This address may need verification for Amoy testnet
+  const AAVE_POOL = "0x794a61358D6845594F94dc1DB02A252b5b4814aD"; // TODO: Verify Aave v3 address on Amoy
   await yieldHarvester.addProtocol("Aave", AAVE_POOL);
   console.log("✅ Added Aave protocol integration");
 
@@ -79,7 +80,8 @@ async function main() {
 
   // Save deployment info
   const deploymentInfo = {
-    network: "polygon",
+    network: "polygon-amoy-testnet",
+    chainId: 80002,
     stakingProxy: stakingProxyAddress,
     yieldHarvester: yieldHarvesterAddress,
     usdc: USDC_ADDRESS,

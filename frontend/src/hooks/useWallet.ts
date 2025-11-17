@@ -19,14 +19,14 @@ export function useWallet() {
     }
   }, [isConnected, address])
 
-  const isPolygon = chainId === 137
+  const isPolygonAmoy = chainId === 80002
 
   return {
     address,
     isConnected,
     isConnecting,
     chainId,
-    isPolygon,
+    isPolygonAmoy,
     connect: () => connect({ connector: connectors[0] }),
     disconnect,
   }

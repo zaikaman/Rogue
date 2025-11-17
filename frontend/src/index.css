@@ -55,6 +55,10 @@
   .gradient-teal {
     background: linear-gradient(135deg, #00D4FF 0%, #00A8CC 100%);
   }
+
+  .bg-gradient-teal {
+    background: linear-gradient(135deg, #00D4FF 0%, #00A8CC 100%);
+  }
   
   .gradient-noir {
     background: linear-gradient(180deg, #1E1E1E 0%, #0A0A0A 100%);
