@@ -1,0 +1,17 @@
+{
+  "network": "Polygon Amoy Testnet",
+  "networkKey": "polygon",
+  "chainId": 80002,
+  "stakingProxy": "0xBe038f9Fa03C127e5E565a77b5b6DD1507B223a1",
+  "yieldHarvester": "0xa26A882e63B598B7f4B39C56fB014A7F4398FbFD",
+  "tokens": {
+    "usdc": "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582",
+    "dai": "0x001B3B4d0F3714Ca98ba10F6042DaEbF0B1B7b6F",
+    "wmatic": "0x360ad4f9a9A8EFe9A8DCB5f461c4Cc1047E1Dcf9"
+  },
+  "protocols": {
+    "aave": "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951"
+  },
+  "deployer": "0xda61fd21C918783B9f28c507D7f9F86E31e31Db8",
+  "timestamp": "2025-11-18T09:33:22.362Z"
+}

@@ -18,13 +18,13 @@ const SUPPORTED_TOKENS = [
 ]
 
 const SUPPORTED_CHAINS = [
-  { id: 'mumbai', name: 'Mumbai Testnet', icon: '⬡' },
+  { id: 'amoy', name: 'Polygon Amoy', icon: '⬡' },
   { id: 'sepolia', name: 'Sepolia', icon: '⟠' },
   { id: 'base_sepolia', name: 'Base Sepolia', icon: '🔵' },
 ]
 
 export default function Swap() {
-  const [selectedChain, setSelectedChain] = useState('mumbai')
+  const [selectedChain, setSelectedChain] = useState('amoy')
   const [fromToken, setFromToken] = useState('USDC')
   const [toToken, setToToken] = useState('ETH')
   const [amount, setAmount] = useState('')

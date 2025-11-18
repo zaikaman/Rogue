@@ -12,22 +12,22 @@ interface TokenHolding {
 }
 
 const CHAIN_COLORS = {
-  mumbai: 'from-purple-500 to-violet-600',
+  amoy: 'from-purple-500 to-violet-600',
   sepolia: 'from-blue-500 to-cyan-600',
   base_sepolia: 'from-indigo-500 to-blue-600'
 }
 
 const CHAIN_ICONS = {
-  mumbai: '⬡',
+  amoy: '⬡',
   sepolia: '⟠',
   base_sepolia: '🔵'
 }
 
 export default function Portfolio() {
   const [holdings] = useState<TokenHolding[]>([
-    { symbol: 'USDC', name: 'USD Coin', balance: '2,450.00', valueUsd: 2450, chain: 'mumbai', apy: 8.2, protocol: 'Aave v3', icon: '💵' },
+    { symbol: 'USDC', name: 'USD Coin', balance: '2,450.00', valueUsd: 2450, chain: 'amoy', apy: 8.2, protocol: 'Aave v3', icon: '💵' },
     { symbol: 'ETH', name: 'Ethereum', balance: '0.847', valueUsd: 1564.82, chain: 'sepolia', apy: 4.5, protocol: 'Lido', icon: '⟠' },
-    { symbol: 'MATIC', name: 'Polygon', balance: '1,234.56', valueUsd: 1074.07, chain: 'mumbai', icon: '⬡' },
+    { symbol: 'MATIC', name: 'Polygon', balance: '1,234.56', valueUsd: 1074.07, chain: 'amoy', icon: '⬡' },
     { symbol: 'DAI', name: 'Dai Stablecoin', balance: '850.00', valueUsd: 850, chain: 'base_sepolia', apy: 6.3, protocol: 'Compound', icon: '◈' },
   ])
   const [selectedChain, setSelectedChain] = useState<string>('all')

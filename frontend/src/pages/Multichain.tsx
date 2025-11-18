@@ -11,16 +11,16 @@ interface YieldOpportunity {
 }
 
 const OPPORTUNITIES: YieldOpportunity[] = [
-  { protocol: 'Aave V3', chain: 'mumbai', asset: 'USDC', apy: 12.4, tvl: '$842M', risk: 'low', type: 'yield' },
+  { protocol: 'Aave V3', chain: 'amoy', asset: 'USDC', apy: 12.4, tvl: '$842M', risk: 'low', type: 'yield' },
   { protocol: 'Compound', chain: 'base_sepolia', asset: 'DAI', apy: 9.8, tvl: '$421M', risk: 'low', type: 'yield' },
   { protocol: 'Lido', chain: 'sepolia', asset: 'ETH', apy: 4.5, tvl: '$8.2B', risk: 'low', type: 'stake' },
-  { protocol: 'Uniswap V3', chain: 'mumbai', asset: 'USDC-ETH', apy: 18.7, tvl: '$1.2B', risk: 'medium', type: 'lp' },
+  { protocol: 'Uniswap V3', chain: 'amoy', asset: 'USDC-ETH', apy: 18.7, tvl: '$1.2B', risk: 'medium', type: 'lp' },
   { protocol: 'SushiSwap', chain: 'sepolia', asset: 'MATIC-USDC', apy: 24.3, tvl: '$156M', risk: 'high', type: 'lp' },
   { protocol: 'Stargate', chain: 'base_sepolia', asset: 'USDC', apy: 8.2, tvl: '$312M', risk: 'low', type: 'yield' },
 ]
 
 const CHAIN_INFO = {
-  mumbai: { name: 'Polygon Mumbai', icon: '⬡', color: 'from-purple-500 to-violet-600', textColor: 'text-purple-400' },
+  amoy: { name: 'Polygon Amoy', icon: '⬡', color: 'from-purple-500 to-violet-600', textColor: 'text-purple-400' },
   sepolia: { name: 'Ethereum Sepolia', icon: '⟠', color: 'from-blue-500 to-cyan-600', textColor: 'text-blue-400' },
   base_sepolia: { name: 'Base Sepolia', icon: '🔵', color: 'from-indigo-500 to-blue-600', textColor: 'text-indigo-400' }
 }

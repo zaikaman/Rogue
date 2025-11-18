@@ -1,7 +1,7 @@
 # Rogue Yield Agent - Production Deployment Guide
 
 ## Overview
-This guide covers deploying Rogue's multichain yield farming platform to testnet environments (Mumbai, Sepolia, Base Sepolia).
+This guide covers deploying Rogue's multichain yield farming platform to testnet environments (Polygon Amoy, Sepolia, Base Sepolia).
 
 ## Prerequisites
 
@@ -12,9 +12,31 @@ This guide covers deploying Rogue's multichain yield farming platform to testnet
 - **Private Key** - Wallet with testnet funds on all chains
 
 ### Testnet Faucets
-- Mumbai (Polygon): https://faucet.polygon.technology/
+- Polygon Amoy: https://faucet.polygon.technology/
 - Sepolia (Ethereum): https://sepoliafaucet.com/
 - Base Sepolia: https://www.coinbase.com/faucets/base-sepolia-faucet
+- Aave Faucet (for testnet tokens): https://app.aave.com/faucet/
+
+### Testnet Token Addresses
+
+**Polygon Amoy (ChainID: 80002)**
+- USDC: `0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582`
+- DAI: `0x001B3B4d0F3714Ca98ba10F6042DaEbF0B1B7b6F`
+- WMATIC: `0x360ad4f9a9A8EFe9A8DCB5f461c4Cc1047E1Dcf9`
+- Aave v3 Pool: `0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951`
+
+**Sepolia (ChainID: 11155111)**
+- USDC: `0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8`
+- DAI: `0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357`
+- WETH: `0xC558DBdd856501FCd9aaF1E62eae57A9F0629a3c`
+- Aave v3 Pool: `0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951`
+- Compound v3 USDC: `0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e`
+
+**Base Sepolia (ChainID: 84532)**
+- USDC: `0x036CbD53842c5426634e7929541eC2318f3dCF7e`
+- DAI: `0x7268Fdf2Eb25F8A1Fb8365B69d65A6c8423ff333`
+- WETH: `0x4200000000000000000000000000000000000006`
+- Aave v3 Pool: `0x07eA79F68B2B3df564D0A34F8e19D9B1e339814b`
 
 ---
 
@@ -38,7 +60,7 @@ SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 # Blockchain RPC URLs (Alchemy recommended)
-MUMBAI_RPC_URL=https://polygon-mumbai.g.alchemy.com/v2/YOUR_API_KEY
+POLYGON_AMOY_RPC_URL=https://polygon-amoy.g.alchemy.com/v2/YOUR_API_KEY
 SEPOLIA_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY
 BASE_SEPOLIA_RPC_URL=https://base-sepolia.g.alchemy.com/v2/YOUR_API_KEY
 
@@ -61,8 +83,8 @@ OPENAI_API_KEY=sk-...
 
 ```env
 VITE_API_URL=http://localhost:3001
-VITE_CHAIN_ID=80001
-VITE_NETWORK_NAME=Mumbai Testnet
+VITE_CHAIN_ID=80002
+VITE_NETWORK_NAME=Polygon Amoy Testnet
 ```
 
 ---
@@ -103,6 +125,8 @@ The schema includes RLS policies that:
 
 ### 3.1 Deploy Contracts
 
+The deployment script is now **network-aware** and will automatically use the correct addresses for each testnet.
+
 ```powershell
 # Navigate to contracts directory
 cd contracts
@@ -110,7 +134,7 @@ cd contracts
 # Install dependencies
 npm install
 
-# Deploy to Mumbai testnet
+# Deploy to Polygon Amoy testnet
 npx hardhat run scripts/deploy.ts --network polygon
 
 # Deploy to Sepolia testnet
@@ -120,19 +144,43 @@ npx hardhat run scripts/deploy.ts --network sepolia
 npx hardhat run scripts/deploy.ts --network baseSepolia
 ```
 
+**Network Configuration:**
+- **Polygon Amoy**: USDC, DAI, WMATIC, Aave v3
+- **Sepolia**: USDC, DAI, WETH, Aave v3, Compound v3
+- **Base Sepolia**: USDC, DAI, WETH, Aave v3
+
 ### 3.2 Update Contract Addresses
-After deployment, copy the contract addresses to `backend/.env`:
+After deployment, the script will output the addresses. Copy them to `backend/.env`:
 
 ```env
 YIELD_HARVESTER_ADDRESS=0x... # YieldHarvester contract
 STAKING_PROXY_ADDRESS=0x...   # StakingProxy contract
-ATP_TOKEN_ADDRESS=0x...        # ATPToken contract
+ATP_TOKEN_ADDRESS=0x...        # ATPToken contract (if deployed)
 ```
 
-### 3.3 Verify Contracts on Etherscan
+**Save Deployment Info:**
+The script also outputs JSON. Save it to `contracts/deployments/{network}.json` for future reference.
+
+### 3.3 Verify Contracts on Block Explorers
+
 ```powershell
-npx hardhat verify --network mumbai 0xYourContractAddress
+# Verify on Polygon Amoy (PolygonScan)
+npx hardhat verify --network polygon 0xYourYieldHarvesterAddress "0xDeployerAddress"
+npx hardhat verify --network polygon 0xYourStakingProxyAddress "0xUSDCAddress" "0xYieldHarvesterAddress"
+
+# Verify on Sepolia (Etherscan)
+npx hardhat verify --network sepolia 0xYourYieldHarvesterAddress "0xDeployerAddress"
+npx hardhat verify --network sepolia 0xYourStakingProxyAddress "0xUSDCAddress" "0xYieldHarvesterAddress"
+
+# Verify on Base Sepolia (BaseScan)
+npx hardhat verify --network baseSepolia 0xYourYieldHarvesterAddress "0xDeployerAddress"
+npx hardhat verify --network baseSepolia 0xYourStakingProxyAddress "0xUSDCAddress" "0xYieldHarvesterAddress"
 ```
+
+**Block Explorers:**
+- Polygon Amoy: https://amoy.polygonscan.com/
+- Sepolia: https://sepolia.etherscan.io/
+- Base Sepolia: https://sepolia.basescan.org/
 
 ---
 
@@ -181,7 +229,7 @@ npm run dev
 **Access Frontend:**
 - URL: http://localhost:5173
 - Connect wallet (MetaMask recommended)
-- Switch to Mumbai testnet
+- Switch to Polygon Amoy testnet
 
 ---
 
@@ -198,10 +246,10 @@ seedStrategies();
 ```
 
 This creates strategies for:
-- Aave V3 (Mumbai, Sepolia, Base Sepolia)
+- Aave V3 (Polygon Amoy, Sepolia, Base Sepolia)
 - Compound V3 (Sepolia)
 - Lido Staking (Sepolia)
-- Uniswap V3 LP (Mumbai, Sepolia)
+- Uniswap V3 LP (Polygon Amoy, Sepolia)
 - Curve Finance (Base Sepolia)
 
 ---
@@ -211,7 +259,7 @@ This creates strategies for:
 The executor wallet needs testnet funds to execute transactions on behalf of users:
 
 ```powershell
-# Mumbai (MATIC)
+# Polygon Amoy (MATIC)
 # Send ~10 MATIC to executor address
 
 # Sepolia (ETH)
@@ -265,7 +313,7 @@ console.log(wallet.address);
 
 ### Test Swap Functionality
 ```bash
-curl -X GET "http://localhost:3001/api/swap/quote?chain=mumbai&fromToken=USDC&toToken=DAI&amount=1000000"
+curl -X GET "http://localhost:3001/api/swap/quote?chain=amoy&fromToken=USDC&toToken=DAI&amount=1000000"
 ```
 
 ### Test Portfolio
@@ -371,4 +419,4 @@ For issues or questions:
 
 **Last Updated**: November 2025  
 **Version**: 1.0.0  
-**Network**: Mumbai/Sepolia/Base Sepolia Testnets
+**Network**: Polygon Amoy/Sepolia/Base Sepolia Testnets

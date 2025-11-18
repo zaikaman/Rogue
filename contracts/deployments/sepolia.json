@@ -1,0 +1,18 @@
+{
+  "network": "Ethereum Sepolia Testnet",
+  "networkKey": "sepolia",
+  "chainId": 11155111,
+  "stakingProxy": "0xBe038f9Fa03C127e5E565a77b5b6DD1507B223a1",
+  "yieldHarvester": "0xa26A882e63B598B7f4B39C56fB014A7F4398FbFD",
+  "tokens": {
+    "usdc": "0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8",
+    "dai": "0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357",
+    "weth": "0xC558DBdd856501FCd9aaF1E62eae57A9F0629a3c"
+  },
+  "protocols": {
+    "aave": "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
+    "compound": "0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e"
+  },
+  "deployer": "0xda61fd21C918783B9f28c507D7f9F86E31e31Db8",
+  "timestamp": "2025-11-18T16:16:49.012Z"
+}
