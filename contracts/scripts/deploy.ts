@@ -19,35 +19,36 @@ async function main() {
 
   // Polygon Amoy Testnet token addresses
   const USDC_ADDRESS = "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582"; // USDC on Polygon Amoy
-  const KRWQ_ADDRESS = "0x0000000000000000000000000000000000000000"; // TODO: Replace with actual KRWQ address
 
-  // Deploy StakingProxy first (without YieldHarvester address)
+  console.log("📝 Token Configuration:");
+  console.log("  USDC:", USDC_ADDRESS, "\n");
+
+  // Deploy YieldHarvester first with a placeholder address
+  console.log("📝 Deploying YieldHarvester...");
+  const YieldHarvester = await ethers.getContractFactory("YieldHarvester");
+  // Use deployer address as temporary stakingProxy address
+  const yieldHarvester = await YieldHarvester.deploy(deployer.address);
+  await yieldHarvester.waitForDeployment();
+  const yieldHarvesterAddress = await yieldHarvester.getAddress();
+  console.log("✅ YieldHarvester deployed to:", yieldHarvesterAddress, "\n");
+
+  // Deploy StakingProxy with the actual YieldHarvester address
   console.log("📝 Deploying StakingProxy...");
   const StakingProxy = await ethers.getContractFactory("StakingProxy");
   
-  // Deploy with placeholder address, will update after YieldHarvester deployment
   const stakingProxy = await StakingProxy.deploy(
     USDC_ADDRESS,
-    KRWQ_ADDRESS,
-    deployer.address // Temporary - will update
+    yieldHarvesterAddress
   );
   await stakingProxy.waitForDeployment();
   const stakingProxyAddress = await stakingProxy.getAddress();
   console.log("✅ StakingProxy deployed to:", stakingProxyAddress, "\n");
 
-  // Deploy YieldHarvester
-  console.log("📝 Deploying YieldHarvester...");
-  const YieldHarvester = await ethers.getContractFactory("YieldHarvester");
-  const yieldHarvester = await YieldHarvester.deploy(stakingProxyAddress);
-  await yieldHarvester.waitForDeployment();
-  const yieldHarvesterAddress = await yieldHarvester.getAddress();
-  console.log("✅ YieldHarvester deployed to:", yieldHarvesterAddress, "\n");
-
-  // Update StakingProxy with correct YieldHarvester address
-  console.log("📝 Updating StakingProxy with YieldHarvester address...");
-  const updateTx = await stakingProxy.updateYieldHarvester(yieldHarvesterAddress);
+  // Update YieldHarvester with correct StakingProxy address
+  console.log("📝 Updating YieldHarvester with StakingProxy address...");
+  const updateTx = await yieldHarvester.updateStakingProxy(stakingProxyAddress);
   await updateTx.wait();
-  console.log("✅ StakingProxy updated\n");
+  console.log("✅ YieldHarvester updated\n");
 
   // Add protocol integrations to YieldHarvester
   console.log("📝 Adding protocol integrations...");
@@ -71,7 +72,6 @@ async function main() {
   console.log("  YieldHarvester:", yieldHarvesterAddress);
   console.log("\nConfiguration:");
   console.log("  USDC:", USDC_ADDRESS);
-  console.log("  KRWQ:", KRWQ_ADDRESS);
   console.log("  Deployer:", deployer.address);
   console.log("\nProtocols:");
   console.log("  Aave v3:", AAVE_POOL);
@@ -85,7 +85,6 @@ async function main() {
     stakingProxy: stakingProxyAddress,
     yieldHarvester: yieldHarvesterAddress,
     usdc: USDC_ADDRESS,
-    krwq: KRWQ_ADDRESS,
     deployer: deployer.address,
     timestamp: new Date().toISOString()
   };

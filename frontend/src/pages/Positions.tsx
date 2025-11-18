@@ -12,7 +12,7 @@ export default function Positions() {
     },
     {
       id: '2',
-      token: 'KRWQ',
+      token: 'USDC',
       amount: '2,500',
       apy: '18.7%',
       earned: '$156.89',

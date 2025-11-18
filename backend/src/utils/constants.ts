@@ -42,8 +42,6 @@ export const config = {
 export const TOKEN_ADDRESSES = {
   USDC: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582', // Amoy testnet USDC
   WMATIC: '0x360ad4f9a9A8EFe9A8DCB5f461c4Cc1047E1Dcf9', // Amoy testnet WMATIC
-  // KRWQ address to be added when available
-  KRWQ: process.env.KRWQ_ADDRESS || '',
 };
 
 /**

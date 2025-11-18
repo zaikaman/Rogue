@@ -50,7 +50,7 @@ async function logTransaction(
 interface WorkflowInput {
   positionId: string;
   walletAddress: string;
-  token: 'USDC' | 'KRWQ';
+  token: 'USDC';
   amount: number;
   riskProfile: 'low' | 'medium' | 'high';
   action: 'create' | 'compound' | 'unstake';
@@ -334,7 +334,7 @@ export async function runYieldOptimizationWorkflow(
  */
 export async function createPositionWorkflow(
   walletAddress: string,
-  token: 'USDC' | 'KRWQ',
+  token: 'USDC',
   amount: number,
   riskProfile: 'low' | 'medium' | 'high'
 ): Promise<WorkflowOutput> {

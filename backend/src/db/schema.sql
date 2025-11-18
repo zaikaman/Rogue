@@ -8,7 +8,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS positions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     wallet_address TEXT NOT NULL,
-    token TEXT NOT NULL CHECK (token IN ('USDC', 'KRWQ')),
+    token TEXT NOT NULL CHECK (token = 'USDC'),
     amount DECIMAL(36, 18) NOT NULL CHECK (amount > 0),
     risk_profile TEXT NOT NULL CHECK (risk_profile IN ('low', 'medium', 'high')),
     status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'paused', 'closed', 'unstaking')),

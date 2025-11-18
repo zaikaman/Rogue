@@ -13,7 +13,7 @@ import { runEnhancedExecutor } from '../agents/executor-enhanced';
 interface WorkflowInput {
   positionId: string;
   walletAddress: string;
-  token: 'USDC' | 'KRWQ';
+  token: 'USDC';
   amount: number;
   riskProfile: 'low' | 'medium' | 'high';
   action: 'create' | 'compound' | 'rebalance' | 'unstake';

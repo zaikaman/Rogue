@@ -165,7 +165,7 @@ export async function getFraxPoolYield(poolId: string): Promise<FraxYieldData | 
 }
 
 /**
- * Get Frax yields for specific token (e.g., USDC, KRWQ)
+ * Get Frax yields for specific token (e.g., USDC)
  */
 export async function getFraxYieldsForToken(tokenSymbol: string): Promise<FraxYieldData[]> {
   const query = `

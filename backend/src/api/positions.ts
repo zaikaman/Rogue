@@ -13,7 +13,7 @@ const router = Router();
 // Validation schemas
 const createPositionSchema = z.object({
   walletAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid Ethereum address'),
-  token: z.enum(['USDC', 'KRWQ']),
+  token: z.literal('USDC'),
   amount: z.string().regex(/^\d+(\.\d+)?$/, 'Invalid amount'),
   riskProfile: z.enum(['low', 'medium', 'high']),
   signature: z.string(),

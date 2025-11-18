@@ -125,10 +125,10 @@ router.get('/recommend/:walletAddress', async (req: Request, res: Response, next
       });
     }
 
-    if (!['USDC', 'KRWQ'].includes(token as string)) {
+    if (!['USDC'].includes(token as string)) {
       return res.status(400).json({
         error: 'Invalid token',
-        message: 'Token must be USDC or KRWQ'
+        message: 'Token must be USDC'
       });
     }
 

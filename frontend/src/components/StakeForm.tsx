@@ -7,7 +7,7 @@ interface StakeFormProps {
 }
 
 export default function StakeForm({ riskProfile, walletAddress }: StakeFormProps) {
-  const [token, setToken] = useState<'USDC' | 'KRWQ'>('USDC')
+  const token = 'USDC' as const
   const [amount, setAmount] = useState('')
   const [isStaking, setIsStaking] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -73,26 +73,11 @@ export default function StakeForm({ riskProfile, walletAddress }: StakeFormProps
         </div>
       )}
 
-      {/* Token Selection */}
+      {/* Token Display */}
       <div className="mb-6">
-        <label className="block text-sm text-gray-400 mb-3 font-mono">SELECT TOKEN</label>
-        <div className="grid grid-cols-2 gap-3">
-          {['USDC', 'KRWQ'].map((t) => (
-            <button
-              key={t}
-              onClick={() => setToken(t as 'USDC' | 'KRWQ')}
-              className={`
-                py-4 px-6 rounded-sm font-bold text-lg transition-all duration-300
-                ${
-                  token === t
-                    ? 'bg-gradient-teal text-noir-black glow-teal'
-                    : 'terminal-border text-gray-400 hover:text-white hover:bg-noir-gray/50'
-                }
-              `}
-            >
-              {t}
-            </button>
-          ))}
+        <label className="block text-sm text-gray-400 mb-3 font-mono">TOKEN</label>
+        <div className="py-4 px-6 rounded-sm font-bold text-lg bg-gradient-teal text-noir-black glow-teal">
+          USDC
         </div>
       </div>
 

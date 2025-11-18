@@ -38,7 +38,7 @@ export function getSupabaseClient(): SupabaseClient {
 export interface Position {
   id: string;
   wallet_address: string;
-  token: 'USDC' | 'KRWQ';
+  token: 'USDC';
   amount: string;
   risk_profile: 'low' | 'medium' | 'high';
   status: 'active' | 'paused' | 'closed';

@@ -14,7 +14,7 @@ const apiClient = axios.create({
  */
 export interface CreatePositionPayload {
   wallet_address: string
-  token: 'USDC' | 'KRWQ'
+  token: 'USDC'
   amount: string
   risk_profile: 'low' | 'medium' | 'high'
 }
@@ -22,7 +22,7 @@ export interface CreatePositionPayload {
 export interface Position {
   id: string
   wallet_address: string
-  token: 'USDC' | 'KRWQ'
+  token: 'USDC'
   amount: string
   risk_profile: 'low' | 'medium' | 'high'
   status: 'active' | 'paused' | 'closed'

@@ -9,14 +9,13 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 /**
  * @title StakingProxy
  * @notice ERC-20 staking contract for Rogue Yield Optimizer
- * @dev Accepts USDC/KRWQ deposits and delegates execution to YieldHarvester
+ * @dev Accepts USDC deposits and delegates execution to YieldHarvester
  */
 contract StakingProxy is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
-    // Supported tokens
+    // Supported token
     IERC20 public immutable usdc;
-    IERC20 public immutable krwq;
 
     // YieldHarvester contract address
     address public yieldHarvester;
@@ -70,26 +69,23 @@ contract StakingProxy is Ownable, ReentrancyGuard {
     /**
      * @notice Initialize the StakingProxy contract
      * @param _usdc USDC token address
-     * @param _krwq KRWQ token address
      * @param _yieldHarvester YieldHarvester contract address
      */
     constructor(
         address _usdc,
-        address _krwq,
         address _yieldHarvester
     ) Ownable(msg.sender) {
-        if (_usdc == address(0) || _krwq == address(0) || _yieldHarvester == address(0)) {
+        if (_usdc == address(0) || _yieldHarvester == address(0)) {
             revert InvalidToken();
         }
 
         usdc = IERC20(_usdc);
-        krwq = IERC20(_krwq);
         yieldHarvester = _yieldHarvester;
     }
 
     /**
      * @notice Stake tokens to create a managed position
-     * @param token Token address (USDC or KRWQ)
+     * @param token Token address (must be USDC)
      * @param amount Amount to stake
      * @param riskProfile Risk profile (0=low, 1=medium, 2=high)
      * @return positionId Unique position identifier
@@ -100,7 +96,7 @@ contract StakingProxy is Ownable, ReentrancyGuard {
         uint8 riskProfile
     ) external nonReentrant returns (bytes32 positionId) {
         // Validate inputs
-        if (token != address(usdc) && token != address(krwq)) {
+        if (token != address(usdc)) {
             revert InvalidToken();
         }
         if (amount == 0) {

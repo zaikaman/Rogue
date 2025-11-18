@@ -5,7 +5,7 @@ import { api } from '../services/api'
 export interface Position {
   id: string
   wallet_address: string
-  token: 'USDC' | 'KRWQ'
+  token: 'USDC'
   amount: string
   risk_profile: 'low' | 'medium' | 'high'
   status: 'active' | 'paused' | 'closed'
@@ -48,7 +48,7 @@ export function usePosition() {
   }, [address, isConnected])
 
   const createPosition = async (
-    token: 'USDC' | 'KRWQ',
+    token: 'USDC',
     amount: string,
     riskProfile: 'low' | 'medium' | 'high'
   ) => {

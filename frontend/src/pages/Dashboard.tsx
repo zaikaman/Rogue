@@ -188,7 +188,7 @@ export default function Dashboard() {
               <div className="text-6xl mb-4">📊</div>
               <p className="text-gray-400 mb-4">No active positions yet</p>
               <p className="text-sm text-gray-500 font-mono">
-                Stake USDC or KRWQ to start earning autonomous yields
+                Stake USDC to start earning autonomous yields
               </p>
             </div>
           ) : (
