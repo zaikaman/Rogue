@@ -111,7 +111,7 @@ cd contracts
 npm install
 
 # Deploy to Mumbai testnet
-npx hardhat run scripts/deploy.ts --network mumbai
+npx hardhat run scripts/deploy.ts --network polygon
 
 # Deploy to Sepolia testnet
 npx hardhat run scripts/deploy.ts --network sepolia
