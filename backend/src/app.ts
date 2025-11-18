@@ -8,8 +8,8 @@
  * OpenAI SDK with structured agent patterns.
  */
 
-import { logger } from '../utils/logger.js';
-import { openai } from '../utils/openai.js';
+import { logger } from './utils/logger.js';
+import { openai } from './utils/openai.js';
 
 /**
  * Base Agent interface
@@ -101,7 +101,11 @@ export abstract class BaseAgent implements Agent {
           { role: 'user', content: userPrompt },
         ]);
         
-        return response.choices[0]?.message?.content || '';
+        // Handle both streaming and non-streaming responses
+        if ('choices' in response) {
+          return response.choices[0]?.message?.content || '';
+        }
+        return '';
       }
     } catch (error) {
       logger.error(`LLM call failed in ${this.name}`, {

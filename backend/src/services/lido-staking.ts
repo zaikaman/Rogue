@@ -27,15 +27,30 @@ export async function getLidoAPR(
   try {
     logger.info('Fetching Lido APR', { chain });
 
-    // For testnet, return simulated APR
-    // In production, fetch from Lido API
+    // Use Lido API for real APR data
+    try {
+      const apiUrl = chain === 'sepolia'
+        ? 'https://eth-api-hoodi.testnet.fi/v1/protocol/steth/apr/sma'
+        : 'https://eth-api.lido.fi/v1/protocol/steth/apr/sma';
+
+      const response = await fetch(apiUrl);
+      
+      if (response.ok) {
+        const data = await response.json();
+        const apr = parseFloat(data.apr || data);
+        
+        if (!isNaN(apr) && apr > 0) {
+          logger.info('Fetched real Lido APR', { apr, chain });
+          return Number(apr.toFixed(2));
+        }
+      }
+    } catch (fetchError) {
+      logger.warn('Failed to fetch real APR, using simulated', { fetchError });
+    }
+
+    // Fallback to simulated APR for testnet or on error
     const simulatedAPR = 3.5 + Math.random() * 1.5; // 3.5-5% range
-
     return Number(simulatedAPR.toFixed(2));
-
-    // Production implementation:
-    // const response = await axios.get('https://stake.lido.fi/api/sma-steth-apr');
-    // return response.data.apr;
 
   } catch (error: any) {
     logger.error('Failed to get Lido APR', { error: error.message });

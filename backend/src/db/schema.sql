@@ -11,7 +11,10 @@ CREATE TABLE IF NOT EXISTS positions (
     token TEXT NOT NULL CHECK (token IN ('USDC', 'KRWQ')),
     amount DECIMAL(36, 18) NOT NULL CHECK (amount > 0),
     risk_profile TEXT NOT NULL CHECK (risk_profile IN ('low', 'medium', 'high')),
-    status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'paused', 'closed')),
+    status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'paused', 'closed', 'unstaking')),
+    chain TEXT NOT NULL DEFAULT 'mumbai' CHECK (chain IN ('mumbai', 'sepolia', 'base_sepolia')),
+    allocation JSONB DEFAULT '{}',
+    strategy_id UUID,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     last_action_at TIMESTAMPTZ,
@@ -24,10 +27,15 @@ CREATE TABLE IF NOT EXISTS transaction_records (
     position_id UUID REFERENCES positions(id) ON DELETE CASCADE,
     wallet_address TEXT NOT NULL,
     tx_hash TEXT NOT NULL UNIQUE,
-    type TEXT NOT NULL CHECK (type IN ('stake', 'unstake', 'compound', 'claim', 'rebalance')),
+    type TEXT NOT NULL CHECK (type IN ('stake', 'unstake', 'compound', 'claim', 'rebalance', 'swap', 'bridge')),
     status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'failed')),
+    chain TEXT CHECK (chain IN ('mumbai', 'sepolia', 'base_sepolia')),
+    from_token TEXT,
+    to_token TEXT,
+    amount DECIMAL(36, 18),
     gas_cost DECIMAL(36, 18),
     notes TEXT,
+    metadata JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     confirmed_at TIMESTAMPTZ,
     CONSTRAINT wallet_address_lowercase CHECK (wallet_address = LOWER(wallet_address))
@@ -38,6 +46,8 @@ CREATE TABLE IF NOT EXISTS yield_history (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     position_id UUID REFERENCES positions(id) ON DELETE CASCADE,
     protocol TEXT NOT NULL,
+    chain TEXT NOT NULL CHECK (chain IN ('mumbai', 'sepolia', 'base_sepolia')),
+    asset TEXT NOT NULL,
     apy DECIMAL(10, 4) NOT NULL,
     value DECIMAL(36, 18) NOT NULL,
     timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -46,11 +56,12 @@ CREATE TABLE IF NOT EXISTS yield_history (
 -- Agent execution logs: Debug and monitor AI agent performance
 CREATE TABLE IF NOT EXISTS agent_logs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    agent_name TEXT NOT NULL CHECK (agent_name IN ('researcher', 'analyzer', 'executor', 'governor')),
+    agent_name TEXT NOT NULL CHECK (agent_name IN ('researcher', 'researcher_enhanced', 'analyzer', 'trader_enhanced', 'executor', 'executor_enhanced', 'governor', 'governor_enhanced', 'workflow')),
     position_id UUID REFERENCES positions(id) ON DELETE SET NULL,
     action TEXT NOT NULL,
     input_data JSONB,
     output_data JSONB,
+    metadata JSONB,
     success BOOLEAN NOT NULL,
     error_message TEXT,
     execution_time_ms INTEGER,
@@ -60,13 +71,56 @@ CREATE TABLE IF NOT EXISTS agent_logs (
 -- Strategies: AI-generated yield optimization strategies
 CREATE TABLE IF NOT EXISTS strategies (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    position_id UUID NOT NULL REFERENCES positions(id) ON DELETE CASCADE,
-    risk_profile TEXT NOT NULL CHECK (risk_profile IN ('low', 'medium', 'high')),
-    allocation JSONB NOT NULL, -- {protocol: percentage}
+    position_id UUID REFERENCES positions(id) ON DELETE CASCADE,
+    name TEXT,
+    description TEXT,
+    risk_tier TEXT NOT NULL CHECK (risk_tier IN ('low', 'medium', 'high')),
+    allocation JSONB NOT NULL,
+    protocol_allocations JSONB,
+    action_plan JSONB,
     expected_apy DECIMAL(10, 4) NOT NULL,
+    risk_score INTEGER,
+    leverage_ratio DECIMAL(4, 2) DEFAULT 1.0,
+    min_amount DECIMAL(36, 18),
+    max_amount DECIMAL(36, 18),
     rationale TEXT,
+    metadata JSONB,
+    is_active BOOLEAN NOT NULL DEFAULT true,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    active BOOLEAN NOT NULL DEFAULT true
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Portfolio holdings: Track user token balances across chains
+CREATE TABLE IF NOT EXISTS portfolio_holdings (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    wallet_address TEXT NOT NULL,
+    token_symbol TEXT NOT NULL,
+    token_name TEXT NOT NULL,
+    chain TEXT NOT NULL CHECK (chain IN ('mumbai', 'sepolia', 'base_sepolia')),
+    balance DECIMAL(36, 18) NOT NULL DEFAULT 0,
+    value_usd DECIMAL(36, 2),
+    protocol TEXT,
+    apy DECIMAL(10, 4),
+    last_updated TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT wallet_address_lowercase CHECK (wallet_address = LOWER(wallet_address)),
+    CONSTRAINT unique_holding UNIQUE (wallet_address, token_symbol, chain, protocol)
+);
+
+-- Bridge transactions: Track cross-chain transfers
+CREATE TABLE IF NOT EXISTS bridge_transactions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    wallet_address TEXT NOT NULL,
+    source_chain TEXT NOT NULL CHECK (source_chain IN ('mumbai', 'sepolia', 'base_sepolia')),
+    dest_chain TEXT NOT NULL CHECK (dest_chain IN ('mumbai', 'sepolia', 'base_sepolia')),
+    token TEXT NOT NULL,
+    amount DECIMAL(36, 18) NOT NULL,
+    source_tx_hash TEXT NOT NULL,
+    dest_tx_hash TEXT,
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'delivered', 'failed')),
+    fee DECIMAL(36, 18),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    delivered_at TIMESTAMPTZ,
+    CONSTRAINT wallet_address_lowercase CHECK (wallet_address = LOWER(wallet_address))
 );
 
 -- Indexes for performance
@@ -80,7 +134,12 @@ CREATE INDEX IF NOT EXISTS idx_yield_history_timestamp ON yield_history(timestam
 CREATE INDEX IF NOT EXISTS idx_agent_logs_agent ON agent_logs(agent_name);
 CREATE INDEX IF NOT EXISTS idx_agent_logs_created ON agent_logs(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_strategies_position ON strategies(position_id);
-CREATE INDEX IF NOT EXISTS idx_strategies_active ON strategies(active);
+CREATE INDEX IF NOT EXISTS idx_strategies_active ON strategies(is_active);
+CREATE INDEX IF NOT EXISTS idx_portfolio_holdings_wallet ON portfolio_holdings(wallet_address);
+CREATE INDEX IF NOT EXISTS idx_portfolio_holdings_chain ON portfolio_holdings(chain);
+CREATE INDEX IF NOT EXISTS idx_bridge_transactions_wallet ON bridge_transactions(wallet_address);
+CREATE INDEX IF NOT EXISTS idx_bridge_transactions_status ON bridge_transactions(status);
+CREATE INDEX IF NOT EXISTS idx_positions_chain ON positions(chain);
 
 -- Updated_at trigger function
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -166,6 +225,28 @@ CREATE POLICY "Users can view strategies for own positions"
 
 CREATE POLICY "Service role has full access to strategies"
     ON strategies FOR ALL
+    USING (auth.jwt() ->> 'role' = 'service_role');
+
+-- Portfolio holdings: Users can view their own holdings
+ALTER TABLE portfolio_holdings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own portfolio holdings"
+    ON portfolio_holdings FOR SELECT
+    USING (auth.jwt() ->> 'wallet_address' = wallet_address);
+
+CREATE POLICY "Service role has full access to portfolio holdings"
+    ON portfolio_holdings FOR ALL
+    USING (auth.jwt() ->> 'role' = 'service_role');
+
+-- Bridge transactions: Users can view their own bridge transactions
+ALTER TABLE bridge_transactions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own bridge transactions"
+    ON bridge_transactions FOR SELECT
+    USING (auth.jwt() ->> 'wallet_address' = wallet_address);
+
+CREATE POLICY "Service role has full access to bridge transactions"
+    ON bridge_transactions FOR ALL
     USING (auth.jwt() ->> 'role' = 'service_role');
 
 -- Grant permissions

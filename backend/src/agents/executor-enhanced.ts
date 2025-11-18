@@ -1,19 +1,18 @@
-/**
- * Enhanced Executor Agent
- * Executes on-chain actions: deposits, swaps, bridges, LPs, staking, compounds
- */
-
 import { AgentBuilder, createTool } from '@iqai/adk';
 import * as z from 'zod';
 import dedent from 'dedent';
-import { ethers } from 'ethers';
-import { getProvider } from '../utils/rpc';
-import { buildSwapTransaction } from '../services/1inch-api';
-import { buildBridgeTransaction } from '../services/layerzero-bridge';
-import { buildStakeTransaction } from '../services/lido-staking';
 import { getSupabaseClient } from '../services/supabase';
-import { recordFeeCollection } from '../services/tokenomics';
 import { logger } from '../utils/logger';
+import {
+  executeDeposit,
+  executeSwap,
+  executeBridge,
+  executeCompound,
+  executeStake,
+  executeUnstake,
+  executeClaim,
+  executeAddLiquidity
+} from '../services/transaction-executor';
 
 /**
  * Tool: Execute deposit to lending protocol
@@ -31,45 +30,24 @@ const executeDepositTool = createTool({
   }) as any,
   fn: async ({ positionId, protocol, chain, token, amount, recipient }: any) => {
     try {
-      logger.info('Executing deposit', {
+      const result = await executeDeposit({
         positionId,
         protocol,
         chain,
         token,
-        amount
-      });
-
-      const provider = getProvider();
-      const blockNumber = await provider.getBlockNumber();
-
-      // Simulate transaction for testnet
-      const mockTxHash = ethers.id(`deposit-${positionId}-${Date.now()}`).slice(0, 66);
-
-      const supabase = getSupabaseClient();
-      await supabase.from('transaction_records').insert({
-        position_id: positionId,
-        wallet_address: recipient,
-        tx_hash: mockTxHash,
-        type: 'stake',
-        status: 'confirmed',
         amount,
-        token,
-        gas_cost: '0.05',
-        notes: `Deposited ${ethers.formatUnits(amount, 6)} ${token} to ${protocol} on ${chain}`,
-        metadata: { protocol, chain, blockNumber },
-        created_at: new Date().toISOString(),
-        confirmed_at: new Date().toISOString()
+        recipient
       });
 
       return {
-        txHash: mockTxHash,
+        txHash: result.txHash,
         status: 'confirmed',
         action: 'deposit',
         protocol,
         chain,
         token,
         amount,
-        gasUsed: '0.05'
+        gasUsed: result.gasUsed
       };
     } catch (error: any) {
       logger.error('Deposit execution failed', { error: error.message });
@@ -102,40 +80,23 @@ const executeSwapTool = createTool({
         amount
       });
 
-      await buildSwapTransaction(
+      const result = await executeSwap({
+        positionId,
         chain,
         fromToken,
         toToken,
         amount,
         recipient
-      );
-
-      const mockTxHash = ethers.id(`swap-${positionId}-${Date.now()}`).slice(0, 66);
-
-      const supabase = getSupabaseClient();
-      await supabase.from('transaction_records').insert({
-        position_id: positionId,
-        wallet_address: recipient,
-        tx_hash: mockTxHash,
-        type: 'rebalance',
-        status: 'confirmed',
-        amount,
-        token: toToken,
-        gas_cost: '0.08',
-        notes: `Swapped ${ethers.formatUnits(amount, 6)} ${fromToken} to ${toToken}`,
-        metadata: { fromToken, toToken, chain },
-        created_at: new Date().toISOString(),
-        confirmed_at: new Date().toISOString()
       });
 
       return {
-        txHash: mockTxHash,
+        txHash: result.txHash,
         status: 'confirmed',
         action: 'swap',
         fromToken,
         toToken,
         inputAmount: amount,
-        gasUsed: '0.08'
+        gasUsed: result.gasUsed
       };
     } catch (error: any) {
       logger.error('Swap execution failed', { error: error.message });
@@ -168,13 +129,30 @@ const executeBridgeTool = createTool({
         amount
       });
 
-      await buildBridgeTransaction(sourceChain, destChain, token, amount, recipient);
+      const result = await executeBridge({
+        positionId,
+        sourceChain,
+        destChain,
+        token,
+        amount,
+        recipient
+      });
 
-      const mockTxHash = ethers.id(`bridge-${positionId}-${Date.now()}`).slice(0, 66);
-
-      const supabase = getSupabaseClient();
-      await supabase.from('transaction_records').insert({
-        position_id: positionId,
+      return {
+        txHash: result.txHash,
+        status: 'confirmed',
+        action: 'bridge',
+        sourceChain,
+        destChain,
+        token,
+        amount,
+        gasUsed: result.gasUsed
+      };
+    } catch (error: any) {
+      logger.error('Bridge execution failed', { error: error.message });
+      throw error;
+    }
+  }
         wallet_address: recipient,
         tx_hash: mockTxHash,
         type: 'rebalance',
@@ -225,33 +203,21 @@ const executeStakeTool = createTool({
         amount
       });
 
-      await buildStakeTransaction(amount, recipient, chain === 'sepolia' ? 'sepolia' : 'mainnet');
-
-      const mockTxHash = ethers.id(`stake-${positionId}-${Date.now()}`).slice(0, 66);
-
-      const supabase = getSupabaseClient();
-      await supabase.from('transaction_records').insert({
-        position_id: positionId,
-        wallet_address: recipient,
-        tx_hash: mockTxHash,
-        type: 'stake',
-        status: 'confirmed',
+      const result = await executeStake({
+        positionId,
+        chain,
         amount,
-        token: 'ETH',
-        gas_cost: '0.04',
-        notes: `Staked ${ethers.formatUnits(amount, 18)} ETH on Lido`,
-        metadata: { protocol: 'Lido', chain },
-        created_at: new Date().toISOString(),
-        confirmed_at: new Date().toISOString()
+        recipient
       });
 
       return {
-        txHash: mockTxHash,
+        txHash: result.txHash,
         status: 'confirmed',
         action: 'stake',
         protocol: 'Lido',
         chain,
         amount,
+        gasUsed: result.gasUsed,
         stETHReceived: amount // 1:1 for demo
       };
     } catch (error: any) {
@@ -294,33 +260,23 @@ const executeCompoundTool = createTool({
         fees.toTreasury
       );
 
-      const mockTxHash = ethers.id(`compound-${positionId}-${Date.now()}`).slice(0, 66);
-
-      const supabase = getSupabaseClient();
-      await supabase.from('transaction_records').insert({
-        position_id: positionId,
-        wallet_address: recipient,
-        tx_hash: mockTxHash,
-        type: 'compound',
-        status: 'confirmed',
-        amount: fees.userReceives,
-        token: 'USDC',
-        gas_cost: '0.03',
-        notes: `Compounded ${ethers.formatUnits(fees.userReceives, 6)} USDC (${ethers.formatUnits(fees.totalFee, 6)} USDC fee deducted)`,
-        metadata: { protocol, yieldAmount: yieldAmount, managementFee: fees.totalFee },
-        created_at: new Date().toISOString(),
-        confirmed_at: new Date().toISOString()
+      const result = await executeCompound({
+        positionId,
+        protocol,
+        yieldAmount: fees.userReceives,
+        recipient
       });
 
       return {
-        txHash: mockTxHash,
+        txHash: result.txHash,
         status: 'confirmed',
         action: 'compound',
         protocol,
         yieldHarvested: yieldAmount,
         reinvested: fees.userReceives,
         feesToHolders: fees.toHolders,
-        feesToTreasury: fees.toTreasury
+        feesToTreasury: fees.toTreasury,
+        gasUsed: result.gasUsed
       };
     } catch (error: any) {
       logger.error('Compound execution failed', { error: error.message });
@@ -351,31 +307,23 @@ const executeAddLiquidityTool = createTool({
         pool
       });
 
-      const mockTxHash = ethers.id(`add-lp-${positionId}-${Date.now()}`).slice(0, 66);
-
-      const supabase = getSupabaseClient();
-      await supabase.from('transaction_records').insert({
-        position_id: positionId,
-        wallet_address: recipient,
-        tx_hash: mockTxHash,
-        type: 'rebalance',
-        status: 'confirmed',
-        amount: (BigInt(amount0) + BigInt(amount1)).toString(),
-        token: 'LP',
-        gas_cost: '0.12',
-        notes: `Added liquidity to ${pool} pool`,
-        metadata: { chain, pool, amount0, amount1 },
-        created_at: new Date().toISOString(),
-        confirmed_at: new Date().toISOString()
+      const result = await executeAddLiquidity({
+        positionId,
+        chain,
+        pool,
+        amount0,
+        amount1,
+        recipient
       });
 
       return {
-        txHash: mockTxHash,
+        txHash: result.txHash,
         status: 'confirmed',
         action: 'add_liquidity',
         chain,
         pool,
-        liquidity: (BigInt(amount0) + BigInt(amount1)).toString()
+        liquidity: (BigInt(amount0) + BigInt(amount1)).toString(),
+        gasUsed: result.gasUsed
       };
     } catch (error: any) {
       logger.error('Add liquidity execution failed', { error: error.message });

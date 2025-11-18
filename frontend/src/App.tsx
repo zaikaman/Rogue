@@ -7,6 +7,9 @@ import Stake from './pages/Stake'
 import Positions from './pages/Positions'
 import Analytics from './pages/Analytics'
 import Settings from './pages/Settings'
+import Swap from './pages/Swap'
+import Portfolio from './pages/Portfolio'
+import Multichain from './pages/Multichain'
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="stake" element={<Stake />} />
             <Route path="positions" element={<Positions />} />
+            <Route path="swap" element={<Swap />} />
+            <Route path="portfolio" element={<Portfolio />} />
+            <Route path="multichain" element={<Multichain />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<Settings />} />
           </Route>

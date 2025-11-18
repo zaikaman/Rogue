@@ -4,6 +4,9 @@ import { WalletConnect } from '../components/WalletConnect'
 
 const navigation = [
   { name: 'Dashboard', href: '/app', icon: '📊' },
+  { name: 'Swap', href: '/app/swap', icon: '🔄' },
+  { name: 'Portfolio', href: '/app/portfolio', icon: '💎' },
+  { name: 'Multichain', href: '/app/multichain', icon: '🌐' },
   { name: 'Stake', href: '/app/stake', icon: '💰' },
   { name: 'Positions', href: '/app/positions', icon: '📈' },
   { name: 'Analytics', href: '/app/analytics', icon: '🔍' },

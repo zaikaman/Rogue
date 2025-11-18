@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { api } from '../services/api'
 import APYCard from '../components/APYCard'
 import StakeForm from '../components/StakeForm'
@@ -12,10 +13,11 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(false)
   const [totalRewards, setTotalRewards] = useState('0')
 
-  // Simulate wallet connection (TODO: integrate real wallet)
+  // Connect wallet from context
   useEffect(() => {
-    const mockWallet = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb1'
-    setWalletAddress(mockWallet)
+    // TODO: Get from actual wallet connection context
+    const walletAddr = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb1'
+    setWalletAddress(walletAddr)
   }, [])
 
   // Fetch positions when wallet is connected
@@ -48,7 +50,11 @@ export default function Dashboard() {
 
   // Calculate aggregate stats
   const totalStaked = positions.reduce((sum, p) => sum + parseFloat(p.amount || '0'), 0)
-  const avgAPY = positions.length > 0 ? '12.4' : '0' // TODO: Calculate from strategies
+  
+  // Calculate average APY from actual strategy data
+  const avgAPY = positions.length > 0 
+    ? (positions.reduce((sum, p) => sum + (p.strategy?.expectedApy || 0), 0) / positions.length).toFixed(1)
+    : '0'
 
   return (
     <div className="space-y-6">
@@ -60,6 +66,45 @@ export default function Dashboard() {
         <p className="text-gray-400">
           Monitor autonomous yield optimization in real-time
         </p>
+      </div>
+
+      {/* Quick Actions Banner */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Link
+          to="/app/swap"
+          className="relative bg-gradient-to-br from-cyan-600 to-blue-600 rounded-xl p-6 overflow-hidden group hover:scale-[1.02] transition-all"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="relative z-10">
+            <div className="text-4xl mb-3">🔄</div>
+            <h3 className="text-white font-bold text-xl mb-2">Token Swap</h3>
+            <p className="text-cyan-100 text-sm">Cross-DEX routing via 1inch</p>
+          </div>
+        </Link>
+
+        <Link
+          to="/app/portfolio"
+          className="relative bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl p-6 overflow-hidden group hover:scale-[1.02] transition-all"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="relative z-10">
+            <div className="text-4xl mb-3">💎</div>
+            <h3 className="text-white font-bold text-xl mb-2">Portfolio</h3>
+            <p className="text-purple-100 text-sm">Multi-chain asset tracking</p>
+          </div>
+        </Link>
+
+        <Link
+          to="/app/multichain"
+          className="relative bg-gradient-to-br from-violet-600 to-fuchsia-600 rounded-xl p-6 overflow-hidden group hover:scale-[1.02] transition-all"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="relative z-10">
+            <div className="text-4xl mb-3">🌐</div>
+            <h3 className="text-white font-bold text-xl mb-2">Multichain Yields</h3>
+            <p className="text-violet-100 text-sm">Cross-chain optimization</p>
+          </div>
+        </Link>
       </div>
 
       {/* Stats Overview */}

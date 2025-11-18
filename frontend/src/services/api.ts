@@ -132,6 +132,104 @@ async function unstakePosition(positionId: string): Promise<any> {
 }
 
 /**
+ * Swap API
+ */
+export interface SwapQuote {
+  fromToken: string
+  toToken: string
+  fromAmount: string
+  toAmount: string
+  estimatedGas: string
+  priceImpact: number
+  protocols: string[]
+}
+
+async function getSwapQuote(
+  chain: string,
+  fromToken: string,
+  toToken: string,
+  amount: string
+): Promise<SwapQuote> {
+  const { data } = await apiClient.get('/api/swap/quote', {
+    params: { chain, fromToken, toToken, amount }
+  })
+  return data
+}
+
+async function executeSwap(
+  chain: string,
+  fromToken: string,
+  toToken: string,
+  amount: string,
+  walletAddress: string
+): Promise<{ txHash: string; success: boolean }> {
+  const { data } = await apiClient.post('/api/swap/execute', {
+    chain,
+    fromToken,
+    toToken,
+    amount,
+    walletAddress
+  })
+  return data
+}
+
+/**
+ * Multichain API
+ */
+export interface YieldOpportunity {
+  protocol: string
+  chain: string
+  asset: string
+  apy: number
+  tvl: string
+  risk: 'low' | 'medium' | 'high'
+  type: 'yield' | 'lp' | 'stake'
+}
+
+async function getMultichainOpportunities(
+  chain?: string,
+  minApy?: number
+): Promise<YieldOpportunity[]> {
+  const { data } = await apiClient.get('/api/multichain/opportunities', {
+    params: { chain, minApy }
+  })
+  return data
+}
+
+async function getBridgeQuote(
+  sourceChain: string,
+  destChain: string,
+  token: string,
+  amount: string
+): Promise<{
+  estimatedFee: string
+  estimatedTime: number
+}> {
+  const { data } = await apiClient.get('/api/bridge/quote', {
+    params: { sourceChain, destChain, token, amount }
+  })
+  return data
+}
+
+/**
+ * Portfolio API
+ */
+export interface TokenHolding {
+  symbol: string
+  name: string
+  balance: string
+  valueUsd: number
+  chain: string
+  apy?: number
+  protocol?: string
+}
+
+async function getPortfolioHoldings(walletAddress: string): Promise<TokenHolding[]> {
+  const { data } = await apiClient.get(`/api/portfolio/${walletAddress}`)
+  return data
+}
+
+/**
  * Export API client
  */
 export const api = {
@@ -146,6 +244,14 @@ export const api = {
   updateAllocations,
   claimRewards,
   unstakePosition,
+  // Swap
+  getSwapQuote,
+  executeSwap,
+  // Multichain
+  getMultichainOpportunities,
+  getBridgeQuote,
+  // Portfolio
+  getPortfolioHoldings,
 }
 
 export default api

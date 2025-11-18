@@ -13,6 +13,10 @@ import transactionsRouter from './api/transactions.js';
 import healthRouter from './api/health.js';
 import yieldHistoryRouter from './api/yield-history.js';
 import workflowsRouter from './api/workflows.js';
+import swapRouter from './api/swap.js';
+import bridgeRouter from './api/bridge.js';
+import portfolioRouter from './api/portfolio.js';
+import multichainRouter from './api/multichain.js';
 
 dotenv.config();
 
@@ -58,6 +62,10 @@ app.use('/api/strategies', strategiesRouter);
 app.use('/api/transactions', transactionsRouter);
 app.use('/api/health', healthRouter);
 app.use('/api/workflows', workflowsRouter);
+app.use('/api/swap', swapRouter);
+app.use('/api/bridge', bridgeRouter);
+app.use('/api/portfolio', portfolioRouter);
+app.use('/api/multichain', multichainRouter);
 
 // Error handling
 app.use(notFoundHandler);
