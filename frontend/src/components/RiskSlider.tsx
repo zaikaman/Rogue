@@ -7,8 +7,8 @@ export default function RiskSlider({ value, onChange }: RiskSliderProps) {
   const risks: Array<'low' | 'medium' | 'high'> = ['low', 'medium', 'high']
   
   const getColor = (risk: string) => {
-    if (risk === 'low') return 'from-success to-teal-glow'
-    if (risk === 'medium') return 'from-teal-glow to-warning'
+    if (risk === 'low') return 'from-success to-red-glow'
+    if (risk === 'medium') return 'from-red-glow to-warning'
     return 'from-warning to-danger'
   }
 
@@ -27,7 +27,7 @@ export default function RiskSlider({ value, onChange }: RiskSliderProps) {
                 transition-all duration-300 rounded-sm mx-1
                 ${
                   isActive
-                    ? 'bg-gradient-to-r ' + getColor(risk) + ' text-noir-black font-bold glow-teal scale-105'
+                    ? 'bg-gradient-to-r ' + getColor(risk) + ' text-noir-black font-bold glow-red scale-105'
                     : 'bg-noir-gray/30 text-gray-500 hover:text-white hover:bg-noir-gray/50'
                 }
               `}
@@ -35,7 +35,7 @@ export default function RiskSlider({ value, onChange }: RiskSliderProps) {
               {risk}
               {isActive && (
                 <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-                  <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-teal-glow" />
+                  <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-red-glow" />
                 </div>
               )}
             </button>
@@ -61,7 +61,7 @@ export default function RiskSlider({ value, onChange }: RiskSliderProps) {
             left: value === 'low' ? '16.5%' : value === 'medium' ? '50%' : '83.5%',
           }}
         >
-          <div className="w-4 h-4 bg-teal-glow rounded-full glow-teal-intense" />
+          <div className="w-4 h-4 bg-red-glow rounded-full glow-red-intense" />
         </div>
       </div>
 
@@ -76,7 +76,7 @@ export default function RiskSlider({ value, onChange }: RiskSliderProps) {
           )}
           {value === 'medium' && (
             <>
-              <span className="text-teal-glow font-bold">BALANCED:</span> Optimizes between
+              <span className="text-red-glow font-bold">BALANCED:</span> Optimizes between
               yield and safety. Uses moderate leverage across vetted protocols.
             </>
           )}

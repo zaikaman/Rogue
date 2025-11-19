@@ -74,12 +74,12 @@ export default function Positions() {
           {positions.map((position) => (
             <div
               key={position.id}
-              className="terminal-border bg-noir-dark/50 rounded-sm p-6 hover:glow-teal transition-all duration-300 scan-line"
+              className="terminal-border bg-noir-dark/50 rounded-sm p-6 hover:glow-red transition-all duration-300 scan-line"
             >
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 {/* Left: Token Info */}
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gradient-teal rounded-sm flex items-center justify-center font-bold text-noir-black text-lg glow-teal">
+                  <div className="w-12 h-12 bg-gradient-red rounded-sm flex items-center justify-center font-bold text-noir-black text-lg glow-red">
                     {position.token.charAt(0)}
                   </div>
                   <div>
@@ -92,7 +92,7 @@ export default function Positions() {
                 <div className="grid grid-cols-3 gap-6 flex-1">
                   <div>
                     <div className="text-xs text-gray-500 font-mono mb-1">APY</div>
-                    <div className="text-lg font-bold text-teal-glow">{position.apy}</div>
+                    <div className="text-lg font-bold text-red-glow">{position.apy}</div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-500 font-mono mb-1">EARNED</div>
@@ -105,7 +105,7 @@ export default function Positions() {
                         position.risk === 'low'
                           ? 'text-success'
                           : position.risk === 'medium'
-                          ? 'text-teal-glow'
+                          ? 'text-red-glow'
                           : 'text-warning'
                       }`}
                     >
@@ -116,7 +116,7 @@ export default function Positions() {
 
                 {/* Right: Actions */}
                 <div className="flex gap-3">
-                  <button className="px-4 py-2 terminal-border text-teal-glow font-mono text-sm rounded-sm hover:bg-noir-gray/50 transition-all">
+                  <button className="px-4 py-2 terminal-border text-red-glow font-mono text-sm rounded-sm hover:bg-noir-gray/50 transition-all">
                     ADJUST
                   </button>
                   <button className="px-4 py-2 bg-danger/20 text-danger font-mono text-sm rounded-sm hover:bg-danger/30 transition-all">

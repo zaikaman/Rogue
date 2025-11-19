@@ -87,7 +87,7 @@ export default function Portfolio() {
           </p>
         </div>
         <div className="flex gap-3">
-          <button className="px-4 py-2 bg-teal-glow/10 text-teal-glow border border-teal-glow/50 rounded-sm font-mono text-sm hover:bg-teal-glow hover:text-noir-black transition-all flex items-center gap-2">
+          <button className="px-4 py-2 bg-red-glow/10 text-red-glow border border-red-glow/50 rounded-sm font-mono text-sm hover:bg-red-glow hover:text-noir-black transition-all flex items-center gap-2">
             <HugeiconsIcon icon={ArrowDownLeft01Icon} size={16} />
             DEPOSIT
           </button>
@@ -104,7 +104,7 @@ export default function Portfolio() {
         <div className="lg:col-span-2 terminal-border bg-noir-dark/50 rounded-sm p-8 scan-line relative overflow-hidden">
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-teal-glow/10 rounded-sm flex items-center justify-center text-teal-glow border border-teal-glow/30">
+              <div className="w-10 h-10 bg-red-glow/10 rounded-sm flex items-center justify-center text-red-glow border border-red-glow/30">
                 <HugeiconsIcon icon={Wallet02Icon} size={20} />
               </div>
               <div className="text-gray-500 font-mono text-sm uppercase">Total Balance</div>
@@ -124,7 +124,7 @@ export default function Portfolio() {
           </div>
           
           {/* Background decoration */}
-          <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-teal-glow/5 to-transparent pointer-events-none" />
+          <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-red-glow/5 to-transparent pointer-events-none" />
         </div>
 
         {/* Allocation Chart */}
@@ -173,10 +173,10 @@ export default function Portfolio() {
       <div className="terminal-border bg-noir-dark/50 rounded-sm overflow-hidden">
         <div className="p-4 border-b border-noir-gray/30 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={Coins01Icon} size={16} className="text-teal-glow" />
+            <HugeiconsIcon icon={Coins01Icon} size={16} className="text-red-glow" />
             <h3 className="text-white font-bold font-mono text-sm">YOUR ASSETS</h3>
           </div>
-          <button className="text-xs font-mono text-teal-glow hover:text-white transition-colors flex items-center gap-1">
+          <button className="text-xs font-mono text-red-glow hover:text-white transition-colors flex items-center gap-1">
             VIEW HISTORY <HugeiconsIcon icon={ArrowRight01Icon} size={12} />
           </button>
         </div>
@@ -240,7 +240,7 @@ export default function Portfolio() {
                     </td>
                     <td className="py-4 px-6 text-right">
                       <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="p-1.5 hover:bg-teal-glow/20 text-teal-glow rounded-sm transition-colors" title="Trade">
+                        <button className="p-1.5 hover:bg-red-glow/20 text-red-glow rounded-sm transition-colors" title="Trade">
                           <HugeiconsIcon icon={ChartLineData01Icon} size={16} />
                         </button>
                         <button className="p-1.5 hover:bg-white/20 text-white rounded-sm transition-colors" title="Send">

@@ -91,10 +91,8 @@ export default function Home() {
       <header className="fixed top-0 left-0 right-0 z-50 pt-6 px-6">
         <div className="max-w-7xl mx-auto rounded-full px-6 py-3 bg-noir-black/70 backdrop-blur-xl border border-white/10 shadow-2xl">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 group">
-              <span className="inline-flex items-center justify-center w-8 h-8 rounded bg-teal-glow group-hover:shadow-[0_0_20px_rgba(0,212,255,0.5)] transition-all duration-300">
-                <HugeiconsIcon icon={FlashIcon} size={18} className="text-noir-black" />
-              </span>
+            <Link to="/" className="flex items-center gap-3 group">
+              <img src="/logo.webp" alt="Rogue" className="w-8 h-8 rounded object-cover" />
               <span className="text-white text-lg font-bold tracking-tight">ROGUE</span>
             </Link>
             <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-white/60">
@@ -479,9 +477,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div className="col-span-1 md:col-span-1">
               <div className="flex items-center gap-2 mb-6">
-                <span className="inline-flex items-center justify-center w-8 h-8 rounded bg-teal-glow">
-                  <HugeiconsIcon icon={FlashIcon} size={18} className="text-noir-black" />
-                </span>
+                <img src="/logo.webp" alt="Rogue" className="w-8 h-8 rounded object-cover" />
                 <span className="text-white text-xl font-bold">ROGUE</span>
               </div>
               <p className="text-sm text-gray-500 leading-relaxed">

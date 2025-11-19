@@ -96,7 +96,7 @@ export default function TransactionHistory({ walletAddress, positionId }: Transa
                 px-3 py-1 rounded-sm text-xs font-mono uppercase transition-all
                 ${
                   filter === f
-                    ? 'bg-teal-glow/20 text-teal-glow border border-teal-glow'
+                    ? 'bg-red-glow/20 text-red-glow border border-red-glow'
                     : 'text-gray-500 hover:text-gray-300'
                 }
               `}
@@ -110,12 +110,12 @@ export default function TransactionHistory({ walletAddress, positionId }: Transa
       <div className="p-6">
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="w-8 h-8 border-2 border-teal-glow border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <div className="w-8 h-8 border-2 border-red-glow border-t-transparent rounded-full animate-spin mx-auto mb-4" />
             <p className="text-gray-400 font-mono">Loading transactions...</p>
           </div>
         ) : filteredTransactions.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-teal-glow mb-4 flex justify-center">
+            <div className="text-red-glow mb-4 flex justify-center">
               <HugeiconsIcon icon={File01Icon} size={64} />
             </div>
             <p className="text-gray-400 mb-2">No transactions yet</p>
@@ -132,7 +132,7 @@ export default function TransactionHistory({ walletAddress, positionId }: Transa
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center space-x-3">
-                    <span className="text-teal-glow">
+                    <span className="text-red-glow">
                       <HugeiconsIcon icon={getTypeIcon(tx.type)} size={24} />
                     </span>
                     <div>
@@ -158,7 +158,7 @@ export default function TransactionHistory({ walletAddress, positionId }: Transa
                       href={`https://polygonscan.com/tx/${tx.tx_hash}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-teal-glow hover:text-white font-mono truncate max-w-[200px]"
+                      className="text-red-glow hover:text-white font-mono truncate max-w-[200px]"
                     >
                       {tx.tx_hash.slice(0, 10)}...{tx.tx_hash.slice(-8)}
                     </a>

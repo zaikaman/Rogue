@@ -57,7 +57,7 @@ export default function ClaimUnstakeActions({
         <div className="flex items-center justify-between mb-3">
           <div>
             <div className="text-sm text-gray-400 font-mono mb-1">Claimable Rewards</div>
-            <div className="text-2xl text-teal-glow font-bold font-mono">
+            <div className="text-2xl text-red-glow font-bold font-mono">
               {estimatedRewards} ATP
             </div>
           </div>
@@ -68,7 +68,7 @@ export default function ClaimUnstakeActions({
               px-6 py-3 rounded-sm font-bold text-sm transition-all duration-300
               ${
                 canClaim && !isClaiming && parseFloat(estimatedRewards) > 0
-                  ? 'bg-gradient-teal text-noir-black hover:glow-teal-intense'
+                  ? 'bg-gradient-red text-noir-black hover:glow-red-intense'
                   : 'bg-noir-gray/50 text-gray-600 cursor-not-allowed'
               }
             `}

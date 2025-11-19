@@ -55,7 +55,7 @@ export default function AppLayout() {
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-noir-gray/50">
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-8 h-8 bg-gradient-teal rounded-sm glow-teal group-hover:glow-teal-intense transition-all" />
+            <img src="/logo.webp" alt="Rogue" className="w-8 h-8 rounded-sm object-cover" />
             <span className="text-xl font-bold text-white tracking-tight">ROGUE</span>
           </Link>
         </div>
@@ -74,7 +74,7 @@ export default function AppLayout() {
                   font-medium transition-all duration-200
                   ${
                     isActive
-                      ? 'bg-teal-glow/10 text-teal-glow terminal-border'
+                      ? 'bg-red-glow/10 text-red-glow terminal-border'
                       : 'text-gray-400 hover:text-white hover:bg-noir-gray/50'
                   }
                 `}
@@ -82,7 +82,7 @@ export default function AppLayout() {
                 <HugeiconsIcon icon={item.icon} size={20} />
                 <span className="font-mono text-sm tracking-wide">{item.name}</span>
                 {isActive && (
-                  <div className="ml-auto w-1 h-6 bg-teal-glow rounded-full glow-teal" />
+                  <div className="ml-auto w-1 h-6 bg-red-glow rounded-full glow-red" />
                 )}
               </Link>
             )
@@ -111,6 +111,13 @@ export default function AppLayout() {
           >
             <HugeiconsIcon icon={Menu01Icon} size={24} />
           </button>
+
+          <div className="hidden sm:flex items-center mr-4">
+            <Link to="/" className="flex items-center gap-2">
+              <img src="/logo.webp" alt="Rogue" className="w-6 h-6 rounded-sm object-cover" />
+              <span className="hidden sm:inline text-sm font-bold text-white">ROGUE</span>
+            </Link>
+          </div>
 
           <div className="flex items-center space-x-4">
             {/* Current time */}

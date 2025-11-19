@@ -33,7 +33,7 @@ export default function Stake() {
           {/* Strategy Info */}
           <div className="bg-noir-dark border border-noir-gray/50 p-6 rounded-sm">
             <h3 className="text-lg font-bold text-white mb-4 font-mono flex items-center">
-              <HugeiconsIcon icon={ZapIcon} size={20} className="mr-2 text-teal-glow" />
+              <HugeiconsIcon icon={ZapIcon} size={20} className="mr-2 text-red-glow" />
               STRATEGY BREAKDOWN
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -66,7 +66,7 @@ export default function Stake() {
         <div className="space-y-6">
           <div className="terminal-border bg-noir-dark/50 rounded-sm p-6 scan-line">
             <div className="flex items-center mb-4">
-              <HugeiconsIcon icon={Shield01Icon} size={20} className="text-teal-glow mr-2" />
+              <HugeiconsIcon icon={Shield01Icon} size={20} className="text-red-glow mr-2" />
               <h3 className="font-mono text-sm text-gray-400 uppercase tracking-wide">
                 Risk Profile
               </h3>
@@ -77,7 +77,7 @@ export default function Stake() {
             <div className="mt-8 space-y-4">
               <div className="flex justify-between items-center p-3 bg-noir-gray/30 rounded-sm">
                 <span className="text-gray-400 text-sm">Target APY</span>
-                <span className="text-teal-glow font-mono font-bold">
+                <span className="text-red-glow font-mono font-bold">
                   {riskProfile === 'low' ? '8-12%' : riskProfile === 'medium' ? '12-18%' : '18-28%'}
                 </span>
               </div>
@@ -97,8 +97,8 @@ export default function Stake() {
               </div>
             </div>
 
-            <div className="mt-6 p-4 border border-teal-glow/20 bg-teal-glow/5 rounded-sm">
-              <p className="text-xs text-teal-glow/80 leading-relaxed">
+            <div className="mt-6 p-4 border border-red-glow/20 bg-red-glow/5 rounded-sm">
+              <p className="text-xs text-red-glow/80 leading-relaxed">
                 <span className="font-bold">AI AGENT NOTE:</span> {
                   riskProfile === 'low' 
                     ? "Prioritizing capital preservation. Focusing on blue-chip lending protocols and stablecoin yields."
@@ -126,7 +126,7 @@ export default function Stake() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Trend</span>
-                <span className="text-teal-glow font-mono">BULLISH</span>
+                <span className="text-red-glow font-mono">BULLISH</span>
               </div>
             </div>
           </div>

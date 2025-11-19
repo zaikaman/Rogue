@@ -99,7 +99,7 @@ export default function Multichain() {
           <button
             onClick={() => setAutoOptimize(!autoOptimize)}
             className={`relative w-12 h-6 rounded-full transition-all ${
-              autoOptimize ? 'bg-teal-glow' : 'bg-noir-gray'
+              autoOptimize ? 'bg-red-glow' : 'bg-noir-gray'
             }`}
           >
             <div
@@ -115,7 +115,7 @@ export default function Multichain() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="terminal-border bg-noir-dark/50 rounded-sm p-6 scan-line">
           <div className="text-gray-500 font-mono text-xs uppercase mb-2">Best APY Available</div>
-          <div className="text-3xl font-bold text-teal-glow mb-1">{bestAPY?.apy}%</div>
+          <div className="text-3xl font-bold text-red-glow mb-1">{bestAPY?.apy}%</div>
           <div className="text-white font-mono text-xs flex items-center gap-2">
             {bestAPY?.protocol} 
             <span className="text-gray-600">|</span>
@@ -152,7 +152,7 @@ export default function Multichain() {
               onClick={() => setSelectedChain(chain)}
               className={`px-3 py-1.5 rounded-sm font-mono text-xs transition-all ${
                 selectedChain === chain
-                  ? 'bg-teal-glow/20 text-teal-glow border border-teal-glow/50'
+                  ? 'bg-red-glow/20 text-red-glow border border-red-glow/50'
                   : 'text-gray-400 hover:text-white hover:bg-noir-gray/50'
               }`}
             >
@@ -171,7 +171,7 @@ export default function Multichain() {
               onClick={() => setSelectedRisk(risk)}
               className={`px-3 py-1.5 rounded-sm font-mono text-xs uppercase transition-all ${
                 selectedRisk === risk
-                  ? 'bg-teal-glow/20 text-teal-glow border border-teal-glow/50'
+                  ? 'bg-red-glow/20 text-red-glow border border-red-glow/50'
                   : 'text-gray-400 hover:text-white hover:bg-noir-gray/50'
               }`}
             >
@@ -185,7 +185,7 @@ export default function Multichain() {
             onClick={() => setSortBy('apy')}
             className={`px-3 py-1.5 rounded-sm font-mono text-xs transition-all ${
               sortBy === 'apy'
-                ? 'text-teal-glow'
+                ? 'text-red-glow'
                 : 'text-gray-500 hover:text-gray-300'
             }`}
           >
@@ -195,7 +195,7 @@ export default function Multichain() {
             onClick={() => setSortBy('tvl')}
             className={`px-3 py-1.5 rounded-sm font-mono text-xs transition-all ${
               sortBy === 'tvl'
-                ? 'text-teal-glow'
+                ? 'text-red-glow'
                 : 'text-gray-500 hover:text-gray-300'
             }`}
           >
@@ -208,7 +208,7 @@ export default function Multichain() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {isLoading ? (
           <div className="col-span-full text-center py-12">
-            <div className="w-8 h-8 border-2 border-teal-glow border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <div className="w-8 h-8 border-2 border-red-glow border-t-transparent rounded-full animate-spin mx-auto mb-4" />
             <p className="text-gray-400 font-mono">Scanning networks...</p>
           </div>
         ) : filteredOpps.length === 0 ? (
@@ -244,7 +244,7 @@ export default function Multichain() {
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div>
                   <div className="text-gray-500 font-mono text-xs uppercase mb-1">APY</div>
-                  <div className="text-3xl font-bold text-teal-glow">{opp.apy}%</div>
+                  <div className="text-3xl font-bold text-red-glow">{opp.apy}%</div>
                 </div>
                 <div>
                   <div className="text-gray-500 font-mono text-xs uppercase mb-1">Asset</div>
@@ -267,7 +267,7 @@ export default function Multichain() {
                 </div>
               </div>
 
-              <button className="w-full py-3 rounded-sm font-mono text-sm font-bold bg-teal-glow/10 text-teal-glow border border-teal-glow/50 hover:bg-teal-glow hover:text-noir-black transition-all flex items-center justify-center gap-2 group-hover:glow-teal">
+              <button className="w-full py-3 rounded-sm font-mono text-sm font-bold bg-red-glow/10 text-red-glow border border-red-glow/50 hover:bg-red-glow hover:text-noir-black transition-all flex items-center justify-center gap-2 group-hover:glow-red">
                 DEPLOY AGENT <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
               </button>
             </div>
@@ -278,7 +278,7 @@ export default function Multichain() {
       {/* Auto-Optimization Info */}
       {autoOptimize && (
         <div className="terminal-border bg-noir-dark/50 rounded-sm p-6 scan-line flex items-start gap-4">
-          <div className="w-10 h-10 bg-teal-glow/10 rounded-sm flex items-center justify-center text-teal-glow flex-shrink-0 border border-teal-glow/30">
+          <div className="w-10 h-10 bg-red-glow/10 rounded-sm flex items-center justify-center text-red-glow flex-shrink-0 border border-red-glow/30">
             <HugeiconsIcon icon={BotIcon} size={20} />
           </div>
           <div className="flex-1">

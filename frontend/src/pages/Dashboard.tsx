@@ -93,10 +93,10 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-noir-dark border border-noir-gray/50 p-6 rounded-sm">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-teal-glow/10 rounded-sm">
-              <HugeiconsIcon icon={Wallet01Icon} size={24} className="text-teal-glow" />
+            <div className="p-2 bg-red-glow/10 rounded-sm">
+              <HugeiconsIcon icon={Wallet01Icon} size={24} className="text-red-glow" />
             </div>
-            <span className="text-xs font-mono text-teal-glow">+12.5%</span>
+            <span className="text-xs font-mono text-red-glow">+12.5%</span>
           </div>
           <p className="text-gray-400 text-sm font-mono mb-1">TOTAL VALUE LOCKED</p>
           <h3 className="text-2xl font-bold text-white">${totalStaked.toFixed(2)}</h3>
@@ -130,7 +130,7 @@ export default function Dashboard() {
         {/* P&L Chart */}
         <div className="bg-noir-dark border border-noir-gray/50 p-6 rounded-sm">
           <h3 className="text-lg font-bold text-white mb-6 font-mono flex items-center">
-            <HugeiconsIcon icon={ArrowUpRight01Icon} size={20} className="mr-2 text-teal-glow" />
+            <HugeiconsIcon icon={ArrowUpRight01Icon} size={20} className="mr-2 text-red-glow" />
             PERFORMANCE
           </h3>
           <div className="h-64 w-full">
@@ -175,7 +175,7 @@ export default function Dashboard() {
         {/* Allocation Chart */}
         <div className="bg-noir-dark border border-noir-gray/50 p-6 rounded-sm">
           <h3 className="text-lg font-bold text-white mb-6 font-mono flex items-center">
-            <HugeiconsIcon icon={Layers01Icon} size={20} className="mr-2 text-teal-glow" />
+            <HugeiconsIcon icon={Layers01Icon} size={20} className="mr-2 text-red-glow" />
             ALLOCATION
           </h3>
           <div className="flex items-center justify-center h-64">

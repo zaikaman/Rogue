@@ -19,7 +19,7 @@ export default function Settings() {
               <h3 className="font-mono text-sm text-white uppercase mb-1">Auto-Compound</h3>
               <p className="text-sm text-gray-400">Automatically reinvest yields</p>
             </div>
-            <button className="relative w-14 h-7 bg-teal-glow rounded-full glow-teal">
+            <button className="relative w-14 h-7 bg-red-glow rounded-full glow-red">
               <div className="absolute right-1 top-1 w-5 h-5 bg-noir-black rounded-full transition-all" />
             </button>
           </div>
@@ -42,7 +42,7 @@ export default function Settings() {
               <h3 className="font-mono text-sm text-white uppercase mb-1">Auto-Rebalance</h3>
               <p className="text-sm text-gray-400">Optimize allocations based on yields</p>
             </div>
-            <button className="relative w-14 h-7 bg-teal-glow rounded-full glow-teal">
+            <button className="relative w-14 h-7 bg-red-glow rounded-full glow-red">
               <div className="absolute right-1 top-1 w-5 h-5 bg-noir-black rounded-full transition-all" />
             </button>
           </div>
@@ -74,7 +74,7 @@ export default function Settings() {
                 <span className="text-gray-400 text-sm">{item.label}</span>
                 <button
                   className={`relative w-12 h-6 rounded-full transition-all ${
-                    item.enabled ? 'bg-teal-glow' : 'bg-noir-gray'
+                    item.enabled ? 'bg-red-glow' : 'bg-noir-gray'
                   }`}
                 >
                   <div

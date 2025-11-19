@@ -59,7 +59,7 @@ export default function Analytics() {
             { agent: 'EXECUTOR', transactions: '143', success: '100%', avg: '12.4s' },
           ].map((stat) => (
             <div key={stat.agent} className="bg-noir-gray/30 rounded-sm p-4">
-              <div className="text-teal-glow font-mono font-bold mb-3">{stat.agent}</div>
+              <div className="text-red-glow font-mono font-bold mb-3">{stat.agent}</div>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Actions</span>

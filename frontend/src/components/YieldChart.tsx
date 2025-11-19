@@ -31,7 +31,7 @@ export default function YieldChart({ data, height = 300 }: YieldChartProps) {
 
       {chartData.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-teal-glow mb-4 flex justify-center">
+          <div className="text-red-glow mb-4 flex justify-center">
             <HugeiconsIcon icon={ChartLineData01Icon} size={40} />
           </div>
           <p className="text-gray-400 mb-2">No historical data yet</p>
@@ -45,7 +45,7 @@ export default function YieldChart({ data, height = 300 }: YieldChartProps) {
           <div>
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs text-gray-500 font-mono">APY %</span>
-              <span className="text-xs text-teal-glow font-mono">
+              <span className="text-xs text-red-glow font-mono">
                 Current: {chartData[chartData.length - 1]?.apy.toFixed(2)}%
               </span>
             </div>
@@ -144,7 +144,7 @@ export default function YieldChart({ data, height = 300 }: YieldChartProps) {
             </div>
             <div>
               <div className="text-xs text-gray-500 font-mono mb-1">Peak APY</div>
-              <div className="text-teal-glow font-bold font-mono">
+              <div className="text-red-glow font-bold font-mono">
                 {Math.max(...chartData.map((d) => d.apy)).toFixed(2)}%
               </div>
             </div>

@@ -70,15 +70,15 @@ export default function StakeForm({ riskProfile, walletAddress }: StakeFormProps
         </div>
       )}
       {success && (
-        <div className="mb-4 terminal-border bg-teal-glow/10 border-teal-glow rounded-sm p-3">
-          <p className="text-teal-glow text-sm font-mono">{success}</p>
+        <div className="mb-4 terminal-border bg-red-glow/10 border-red-glow rounded-sm p-3">
+          <p className="text-red-glow text-sm font-mono">{success}</p>
         </div>
       )}
 
       {/* Token Display */}
       <div className="mb-6">
         <label className="block text-sm text-gray-400 mb-3 font-mono">TOKEN</label>
-        <div className="py-4 px-6 rounded-sm font-bold text-lg bg-gradient-teal text-noir-black glow-teal">
+        <div className="py-4 px-6 rounded-sm font-bold text-lg bg-gradient-red text-noir-black glow-red">
           USDC
         </div>
       </div>
@@ -95,11 +95,11 @@ export default function StakeForm({ riskProfile, walletAddress }: StakeFormProps
             className="
               w-full bg-noir-gray/50 terminal-border rounded-sm px-6 py-4
               text-white text-2xl font-bold placeholder-gray-600
-              focus:outline-none focus:glow-teal transition-all
+              focus:outline-none focus:glow-red transition-all
             "
           />
           <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center space-x-3">
-            <button className="text-teal-glow text-sm font-mono hover:text-white transition-colors">
+            <button className="text-red-glow text-sm font-mono hover:text-white transition-colors">
               MAX
             </button>
             <span className="text-gray-500 font-mono text-lg">{token}</span>
@@ -119,7 +119,7 @@ export default function StakeForm({ riskProfile, walletAddress }: StakeFormProps
       <div className="mb-6 terminal-border bg-noir-gray/30 rounded-sm p-4 space-y-3">
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-400 font-mono">Est. APY</span>
-          <span className="text-teal-glow font-bold font-mono">
+          <span className="text-red-glow font-bold font-mono">
             {riskProfile === 'low' ? '10.2%' : riskProfile === 'medium' ? '14.8%' : '22.4%'}
           </span>
         </div>
@@ -132,7 +132,7 @@ export default function StakeForm({ riskProfile, walletAddress }: StakeFormProps
           <span
             className={`font-mono uppercase ${
               riskProfile === 'low' ? 'text-success' :
-              riskProfile === 'medium' ? 'text-teal-glow' : 'text-warning'
+              riskProfile === 'medium' ? 'text-red-glow' : 'text-warning'
             }`}
           >
             {riskProfile}
@@ -153,7 +153,7 @@ export default function StakeForm({ riskProfile, walletAddress }: StakeFormProps
           ${
             !amount || isStaking
               ? 'bg-noir-gray/50 text-gray-600 cursor-not-allowed'
-              : 'bg-gradient-teal text-noir-black hover:glow-teal-intense glitch-on-hover'
+              : 'bg-gradient-red text-noir-black hover:glow-red-intense glitch-on-hover'
           }
         `}
       >

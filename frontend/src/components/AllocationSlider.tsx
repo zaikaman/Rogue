@@ -84,7 +84,7 @@ export default function AllocationSlider({
         </h3>
         <button
           onClick={handleAutoBalance}
-          className="text-xs font-mono text-teal-glow hover:text-white transition-colors"
+          className="text-xs font-mono text-red-glow hover:text-white transition-colors"
         >
           AUTO-BALANCE
         </button>
@@ -105,7 +105,7 @@ export default function AllocationSlider({
         <div className="h-2 bg-noir-gray rounded-full overflow-hidden">
           <div
             className={`h-full transition-all duration-300 ${
-              isValid ? 'bg-gradient-teal' : 'bg-gradient-to-r from-warning to-red-500'
+              isValid ? 'bg-gradient-red' : 'bg-gradient-to-r from-warning to-red-500'
             }`}
             style={{ width: `${Math.min(100, totalAllocation)}%` }}
           />
@@ -123,7 +123,7 @@ export default function AllocationSlider({
           <div key={protocol}>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-white font-mono">{protocol}</span>
-              <span className="text-sm text-teal-glow font-mono font-bold">
+              <span className="text-sm text-red-glow font-mono font-bold">
                 {percentage.toFixed(1)}%
               </span>
             </div>
@@ -132,7 +132,7 @@ export default function AllocationSlider({
               {/* Slider Track */}
               <div className="h-8 bg-noir-gray rounded-sm relative overflow-hidden">
                 <div
-                  className="absolute inset-y-0 left-0 bg-gradient-teal transition-all duration-200"
+                  className="absolute inset-y-0 left-0 bg-gradient-red transition-all duration-200"
                   style={{ width: `${percentage}%` }}
                 />
               </div>
@@ -164,12 +164,12 @@ export default function AllocationSlider({
 
       {/* Impact Preview */}
       {hasChanges && (
-        <div className="mb-6 terminal-border bg-teal-glow/10 border-teal-glow rounded-sm p-4">
+        <div className="mb-6 terminal-border bg-red-glow/10 border-red-glow rounded-sm p-4">
           <div className="flex items-center space-x-2 mb-2">
-            <span className="text-teal-glow">
+            <span className="text-red-glow">
               <HugeiconsIcon icon={Alert02Icon} size={16} />
             </span>
-            <span className="text-sm text-teal-glow font-mono">Pending Changes</span>
+            <span className="text-sm text-red-glow font-mono">Pending Changes</span>
           </div>
           <p className="text-xs text-gray-400 font-mono">
             Rebalancing will trigger on-chain transactions. Gas fees may apply.
@@ -186,7 +186,7 @@ export default function AllocationSlider({
             flex-1 py-3 rounded-sm font-bold text-sm transition-all duration-300
             ${
               hasChanges && isValid && !isLoading
-                ? 'bg-gradient-teal text-noir-black hover:glow-teal-intense'
+                ? 'bg-gradient-red text-noir-black hover:glow-red-intense'
                 : 'bg-noir-gray/50 text-gray-600 cursor-not-allowed'
             }
           `}

@@ -116,7 +116,7 @@ export default function PositionDetail() {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
-          <div className="w-12 h-12 border-2 border-teal-glow border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-12 h-12 border-2 border-red-glow border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-400 font-mono">Loading position...</p>
         </div>
       </div>
@@ -126,11 +126,11 @@ export default function PositionDetail() {
   if (!position) {
     return (
       <div className="text-center py-12">
-        <div className="text-teal-glow mb-4 flex justify-center">
+        <div className="text-red-glow mb-4 flex justify-center">
           <HugeiconsIcon icon={Cancel01Icon} size={64} />
         </div>
         <p className="text-gray-400 mb-2">Position not found</p>
-        <a href="/dashboard" className="text-teal-glow hover:text-white font-mono text-sm flex items-center justify-center gap-2">
+        <a href="/dashboard" className="text-red-glow hover:text-white font-mono text-sm flex items-center justify-center gap-2">
           <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
           Back to Dashboard
         </a>
@@ -151,7 +151,7 @@ export default function PositionDetail() {
         <div>
           <a
             href="/dashboard"
-            className="text-sm text-gray-500 hover:text-teal-glow font-mono mb-2 inline-flex items-center gap-2"
+            className="text-sm text-gray-500 hover:text-red-glow font-mono mb-2 inline-flex items-center gap-2"
           >
             <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
             Back to Dashboard
@@ -238,7 +238,7 @@ export default function PositionDetail() {
                 position.risk_profile === 'low'
                   ? 'text-success'
                   : position.risk_profile === 'medium'
-                  ? 'text-teal-glow'
+                  ? 'text-red-glow'
                   : 'text-warning'
               }`}
             >
@@ -277,7 +277,7 @@ export default function PositionDetail() {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400 font-mono">Expected APY</span>
-              <span className="text-teal-glow font-bold font-mono">
+              <span className="text-red-glow font-bold font-mono">
                 {activeStrategy.expected_apy}%
               </span>
             </div>
