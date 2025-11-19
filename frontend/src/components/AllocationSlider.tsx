@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { Alert02Icon } from '@hugeicons/core-free-icons'
 
 interface AllocationSliderProps {
   currentAllocations: Record<string, number>
@@ -164,7 +166,9 @@ export default function AllocationSlider({
       {hasChanges && (
         <div className="mb-6 terminal-border bg-teal-glow/10 border-teal-glow rounded-sm p-4">
           <div className="flex items-center space-x-2 mb-2">
-            <span className="text-teal-glow">⚠️</span>
+            <span className="text-teal-glow">
+              <HugeiconsIcon icon={Alert02Icon} size={16} />
+            </span>
             <span className="text-sm text-teal-glow font-mono">Pending Changes</span>
           </div>
           <p className="text-xs text-gray-400 font-mono">

@@ -2,6 +2,16 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { WalletConnect } from '../components/WalletConnect'
 import { api } from '../services/api'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { 
+  ArrowUpRight01Icon, 
+  FlashIcon, 
+  Target02Icon, 
+  RepeatIcon, 
+  Shield02Icon,
+  ArrowRight01Icon,
+  CircleIcon
+} from '@hugeicons/core-free-icons'
 
 export default function Home() {
   const [stats, setStats] = useState([
@@ -85,7 +95,10 @@ export default function Home() {
               >
                 <div className="font-mono text-xs text-gray-500 mb-2">{stat.label}</div>
                 <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
-                <div className="text-success text-sm font-mono">↗ {stat.change}</div>
+                <div className="text-success text-sm font-mono flex items-center">
+                  <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} className="mr-1" />
+                  {stat.change}
+                </div>
               </div>
             ))}
           </div>
@@ -111,22 +124,26 @@ export default function Home() {
           <div id="features" className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-20">
             {[
               {
-                icon: '⚡',
+                icon: FlashIcon,
                 title: 'Multi-Agent AI',
-                desc: 'Researcher → Analyzer → Executor workflow autonomously optimizes your positions',
+                desc: (
+                  <span className="flex items-center gap-1 flex-wrap">
+                    Researcher <HugeiconsIcon icon={ArrowRight01Icon} size={12} /> Analyzer <HugeiconsIcon icon={ArrowRight01Icon} size={12} /> Executor workflow autonomously optimizes your positions
+                  </span>
+                ),
               },
               {
-                icon: '🎯',
+                icon: Target02Icon,
                 title: 'Risk Profiles',
                 desc: 'Low, Medium, High risk tolerance—AI personalizes strategies to your comfort zone',
               },
               {
-                icon: '🔄',
+                icon: RepeatIcon,
                 title: 'Auto-Compound',
                 desc: 'Set it and forget it. Cron jobs harvest and reinvest yields 24/7',
               },
               {
-                icon: '🛡️',
+                icon: Shield02Icon,
                 title: 'Battle-Tested',
                 desc: 'Audited smart contracts on Polygon mainnet with full custody control',
               },
@@ -135,8 +152,8 @@ export default function Home() {
                 key={i}
                 className="group p-8 terminal-border bg-noir-dark/30 rounded-sm hover:bg-noir-dark/60 transition-all duration-300"
               >
-                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">
-                  {feature.icon}
+                <div className="text-teal-glow mb-4 group-hover:scale-110 transition-transform">
+                  <HugeiconsIcon icon={feature.icon} size={40} />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2 font-mono">
                   {feature.title}
@@ -152,9 +169,11 @@ export default function Home() {
       <footer className="relative z-10 border-t border-noir-gray/50 mt-32">
         <div className="container mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-            <div className="mb-4 md:mb-0">
+            <div className="mb-4 md:mb-0 flex items-center">
               <span className="font-mono">© 2025 ROGUE</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2">
+                <HugeiconsIcon icon={CircleIcon} size={4} />
+              </span>
               <span>Autonomous DeFi Yield Optimizer</span>
             </div>
             <div className="flex space-x-6">

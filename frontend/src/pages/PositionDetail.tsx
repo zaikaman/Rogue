@@ -6,6 +6,8 @@ import AllocationSlider from '../components/AllocationSlider'
 import APYCard from '../components/APYCard'
 import ClaimUnstakeActions from '../components/ClaimUnstakeActions'
 import TransactionHistory from '../components/TransactionHistory'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { Cancel01Icon, ArrowLeft01Icon } from '@hugeicons/core-free-icons'
 
 export default function PositionDetail() {
   const { id } = useParams<{ id: string }>()
@@ -124,10 +126,13 @@ export default function PositionDetail() {
   if (!position) {
     return (
       <div className="text-center py-12">
-        <div className="text-6xl mb-4">❌</div>
+        <div className="text-teal-glow mb-4 flex justify-center">
+          <HugeiconsIcon icon={Cancel01Icon} size={64} />
+        </div>
         <p className="text-gray-400 mb-2">Position not found</p>
-        <a href="/dashboard" className="text-teal-glow hover:text-white font-mono text-sm">
-          ← Back to Dashboard
+        <a href="/dashboard" className="text-teal-glow hover:text-white font-mono text-sm flex items-center justify-center gap-2">
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
+          Back to Dashboard
         </a>
       </div>
     )
@@ -146,9 +151,10 @@ export default function PositionDetail() {
         <div>
           <a
             href="/dashboard"
-            className="text-sm text-gray-500 hover:text-teal-glow font-mono mb-2 inline-block"
+            className="text-sm text-gray-500 hover:text-teal-glow font-mono mb-2 inline-flex items-center gap-2"
           >
-            ← Back to Dashboard
+            <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
+            Back to Dashboard
           </a>
           <h1 className="text-3xl font-bold text-white mb-2 font-mono tracking-tight">
             POSITION DETAILS

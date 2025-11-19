@@ -605,7 +605,7 @@ CREATE TABLE user_wallets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   wallet_address TEXT NOT NULL UNIQUE,
-  chain_id INTEGER NOT NULL, -- 1=Ethereum, 137=Polygon, etc.
+  chain_id INTEGER NOT NULL, -- 1=Ethereum, 137=Polygon, 80002=Amoy, etc.
   is_primary BOOLEAN DEFAULT false,
   label TEXT, -- "Main", "Trading", "Cold Storage"
   added_at TIMESTAMPTZ DEFAULT now(),

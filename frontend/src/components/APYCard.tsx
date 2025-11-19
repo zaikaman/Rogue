@@ -1,3 +1,6 @@
+import { HugeiconsIcon } from '@hugeicons/react'
+import { ArrowUpRight01Icon, ArrowDownRight01Icon } from '@hugeicons/core-free-icons'
+
 interface APYCardProps {
   title: string
   value: string
@@ -28,7 +31,9 @@ export default function APYCard({ title, value, change, protocol }: APYCardProps
             isPositive ? 'text-success' : 'text-danger'
           }`}
         >
-          <span>{isPositive ? '↗' : '↘'}</span>
+          <span>
+            <HugeiconsIcon icon={isPositive ? ArrowUpRight01Icon : ArrowDownRight01Icon} size={14} />
+          </span>
           <span>{change}</span>
         </div>
       </div>

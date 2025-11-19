@@ -1,3 +1,6 @@
+import { HugeiconsIcon } from '@hugeicons/react'
+import { ChartLineData01Icon } from '@hugeicons/core-free-icons'
+
 export default function Analytics() {
   return (
     <div className="space-y-6">
@@ -14,7 +17,9 @@ export default function Analytics() {
           <h3 className="font-mono text-sm text-gray-400 mb-4 uppercase">Yield History</h3>
           <div className="h-64 flex items-center justify-center text-gray-600">
             <div className="text-center">
-              <div className="text-4xl mb-2">📈</div>
+              <div className="mb-2 flex justify-center">
+                <HugeiconsIcon icon={ChartLineData01Icon} size={48} />
+              </div>
               <div className="font-mono text-sm">Chart coming soon</div>
             </div>
           </div>

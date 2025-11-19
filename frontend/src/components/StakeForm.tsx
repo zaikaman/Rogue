@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { api } from '../services/api'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { ApproximatelyEqualIcon } from '@hugeicons/core-free-icons'
 
 interface StakeFormProps {
   riskProfile: 'low' | 'medium' | 'high'
@@ -43,7 +45,7 @@ export default function StakeForm({ riskProfile, walletAddress }: StakeFormProps
         
         // Redirect to dashboard after 2 seconds
         setTimeout(() => {
-          window.location.href = '/dashboard'
+          window.location.href = '/app'
         }, 2000)
       } else {
         setError('Failed to create position')
@@ -107,7 +109,9 @@ export default function StakeForm({ riskProfile, walletAddress }: StakeFormProps
         {/* Balance */}
         <div className="mt-2 flex justify-between text-sm">
           <span className="text-gray-500 font-mono">Balance: 10,000 {token}</span>
-          <span className="text-gray-500 font-mono">≈ $10,000 USD</span>
+          <span className="text-gray-500 font-mono flex items-center gap-1">
+            <HugeiconsIcon icon={ApproximatelyEqualIcon} size={14} /> $10,000 USD
+          </span>
         </div>
       </div>
 

@@ -485,7 +485,7 @@ try {
 ```typescript
 import { GraphQLClient } from 'graphql-request';
 
-const AAVE_V3_POLYGON_SUBGRAPH = 'https://gateway.thegraph.com/api/subgraphs/id/6yuf1C49aWEscgk5n9D1DekeG1BCk5Z9imJYJT3sVmAT';
+const AAVE_V3_POLYGON_SUBGRAPH = 'https://api.thegraph.com/subgraphs/name/aave/protocol-v3-polygon-amoy';
 
 class AaveSubgraphClient {
   private client: GraphQLClient;
@@ -6533,7 +6533,7 @@ CREATE TABLE user_wallets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   wallet_address TEXT NOT NULL UNIQUE,
-  chain_id INTEGER NOT NULL, -- 1=Ethereum, 137=Polygon, etc.
+  chain_id INTEGER NOT NULL, -- 1=Ethereum, 137=Polygon, 80002=Amoy, etc.
   is_primary BOOLEAN DEFAULT false,
   label TEXT, -- "Main", "Trading", "Cold Storage"
   added_at TIMESTAMPTZ DEFAULT now(),

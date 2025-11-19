@@ -7,7 +7,7 @@
 
 ## Summary
 
-Rogue is an autonomous DeFi yield optimization agent that allows users to connect a Polygon wallet, select a risk profile (low/medium/high), and stake USDC or KRWQ to receive automated yield optimization. The system uses a multi-agent AI workflow (Researcher, Analyzer, Executor, Governor) powered by ADK-TS and OpenAI to scan Frax/Aave yields, personalize strategies, execute on-chain actions (deposits, auto-compounds, hedges), and distribute tokenized rewards via IQAI's ATP. Users interact via a React dashboard showing live APY, yield charts, tx history, and one-click unstake/claim actions. Backend runs on Node.js/Express with Vercel hosting, using Supabase for off-chain data persistence and ethers.js for on-chain execution on Polygon Mumbai testnet.
+Rogue is an autonomous DeFi yield optimization agent that allows users to connect a Polygon wallet, select a risk profile (low/medium/high), and stake USDC or KRWQ to receive automated yield optimization. The system uses a multi-agent AI workflow (Researcher, Analyzer, Executor, Governor) powered by ADK-TS and OpenAI to scan Frax/Aave yields, personalize strategies, execute on-chain actions (deposits, auto-compounds, hedges), and distribute tokenized rewards via IQAI's ATP. Users interact via a React dashboard showing live APY, yield charts, tx history, and one-click unstake/claim actions. Backend runs on Node.js/Express with Vercel hosting, using Supabase for off-chain data persistence and ethers.js for on-chain execution on Polygon Amoy testnet.
 
 ## Technical Context
 
@@ -26,8 +26,8 @@ Rogue is an autonomous DeFi yield optimization agent that allows users to connec
 **Target Platform**: 
   - Frontend: Web browsers (Chrome, Firefox, Safari) with wallet extensions (MetaMask, WalletConnect)
   - Backend: Vercel serverless functions (Node.js runtime)
-  - Smart Contracts: Polygon Mumbai testnet (upgrade path to Polygon mainnet post-hackathon)
-  - RPC: Alchemy API for Polygon network access
+  - Smart Contracts: Polygon Amoy testnet (upgrade path to Polygon mainnet post-hackathon)
+  - RPC: Alchemy API for Polygon Amoy network access
 
 **Project Type**: Web application (full-stack dApp: React frontend + Node.js backend + Solidity contracts)
 
@@ -236,7 +236,7 @@ No violations detected. This section is intentionally left empty per constitutio
 5. **ADK-TS multi-agent patterns** - Find best practices for ADK-TS agent orchestration: error handling, state persistence, agent communication patterns.
 6. **Frax Finance API integration** - Research Frax API endpoints for pool yields, liquidity availability, and KRWQ conversion mechanics.
 7. **Aave subgraph query patterns** - Research The Graph subgraph schema for Aave v3 on Polygon: yield rates, user positions, available markets.
-8. **Chainlink oracle reliability** - Research Chainlink price feed availability on Polygon Mumbai, staleness detection, and fallback strategies.
+8. **Chainlink oracle reliability** - Research Chainlink price feed availability on Polygon Amoy, staleness detection, and fallback strategies.
 9. **Supabase Row Level Security for wallet isolation** - Find best practices for wallet-based RLS policies, encryption patterns for sensitive data.
 10. **Gas optimization for auto-compound profitability** - Research ethers.js gas estimation strategies, batch transaction patterns, and compound frequency heuristics.
 
@@ -269,7 +269,7 @@ No violations detected. This section is intentionally left empty per constitutio
    - EmergencyPause(address executor, string reason)
 
 4. **quickstart.md** - Manual verification steps:
-   - Install MetaMask and add Polygon Mumbai testnet
+   - Install MetaMask and add Polygon Amoy testnet
    - Fund wallet with test MATIC, USDC (faucet links)
    - Connect wallet to localhost:5173 (frontend dev server)
    - Complete stake flow (select risk, enter amount, confirm)

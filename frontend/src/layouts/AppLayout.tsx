@@ -1,21 +1,37 @@
 import { useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
+import { useAccount } from 'wagmi'
 import { WalletConnect } from '../components/WalletConnect'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { 
+  DashboardSquare01Icon, 
+  Wallet01Icon, 
+  Globe02Icon, 
+  CoinsSwapIcon, 
+  ChartLineData01Icon, 
+  Analytics01Icon, 
+  Settings01Icon,
+  Menu01Icon
+} from '@hugeicons/core-free-icons'
 
 const navigation = [
-  { name: 'Dashboard', href: '/app', icon: '📊' },
-  { name: 'Swap', href: '/app/swap', icon: '🔄' },
-  { name: 'Portfolio', href: '/app/portfolio', icon: '💎' },
-  { name: 'Multichain', href: '/app/multichain', icon: '🌐' },
-  { name: 'Stake', href: '/app/stake', icon: '💰' },
-  { name: 'Positions', href: '/app/positions', icon: '📈' },
-  { name: 'Analytics', href: '/app/analytics', icon: '🔍' },
-  { name: 'Settings', href: '/app/settings', icon: '⚙️' },
+  { name: 'Dashboard', href: '/app', icon: DashboardSquare01Icon },
+  { name: 'Portfolio', href: '/app/portfolio', icon: Wallet01Icon },
+  { name: 'Multichain', href: '/app/multichain', icon: Globe02Icon },
+  { name: 'Stake', href: '/app/stake', icon: CoinsSwapIcon },
+  { name: 'Positions', href: '/app/positions', icon: ChartLineData01Icon },
+  { name: 'Analytics', href: '/app/analytics', icon: Analytics01Icon },
+  { name: 'Settings', href: '/app/settings', icon: Settings01Icon },
 ]
 
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const location = useLocation()
+  const { chain, isConnected } = useAccount()
+
+  const isAmoy = chain?.id === 80002
+  const statusColor = !isConnected ? 'bg-gray-500' : isAmoy ? 'bg-success' : 'bg-yellow-500'
+  const networkName = !isConnected ? 'Not Connected' : chain?.name || 'Unknown Network'
 
   return (
     <div className="h-screen flex overflow-hidden bg-noir-black">
@@ -63,7 +79,7 @@ export default function AppLayout() {
                   }
                 `}
               >
-                <span className="text-xl">{item.icon}</span>
+                <HugeiconsIcon icon={item.icon} size={20} />
                 <span className="font-mono text-sm tracking-wide">{item.name}</span>
                 {isActive && (
                   <div className="ml-auto w-1 h-6 bg-teal-glow rounded-full glow-teal" />
@@ -77,10 +93,10 @@ export default function AppLayout() {
         <div className="p-4 border-t border-noir-gray/50">
           <div className="terminal-border bg-noir-gray/30 rounded-sm p-3 scan-line">
             <div className="flex items-center space-x-2 mb-1">
-              <div className="w-2 h-2 bg-success rounded-full pulse-glow" />
+              <div className={`w-2 h-2 ${statusColor} rounded-full pulse-glow`} />
               <span className="font-mono text-xs text-gray-400">NETWORK STATUS</span>
             </div>
-            <div className="font-mono text-xs text-white">Polygon Mainnet</div>
+            <div className="font-mono text-xs text-white">{networkName}</div>
           </div>
         </div>
       </div>
@@ -93,9 +109,7 @@ export default function AppLayout() {
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="lg:hidden text-gray-400 hover:text-white transition-colors"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <HugeiconsIcon icon={Menu01Icon} size={24} />
           </button>
 
           <div className="flex items-center space-x-4">

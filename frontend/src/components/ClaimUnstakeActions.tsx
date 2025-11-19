@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { Alert02Icon, InformationCircleIcon } from '@hugeicons/core-free-icons'
 
 interface ClaimUnstakeActionsProps {
   positionId: string
@@ -98,7 +100,9 @@ export default function ClaimUnstakeActions({
       ) : (
         <div className="terminal-border border-warning bg-warning/10 rounded-sm p-4">
           <div className="flex items-start space-x-2 mb-3">
-            <span className="text-warning text-xl">⚠️</span>
+            <span className="text-warning">
+              <HugeiconsIcon icon={Alert02Icon} size={20} />
+            </span>
             <div>
               <div className="text-warning font-bold font-mono mb-1">Confirm Unstake</div>
               <p className="text-sm text-gray-300">
@@ -136,14 +140,18 @@ export default function ClaimUnstakeActions({
       {/* Info */}
       <div className="mt-4 space-y-2">
         <div className="flex items-start space-x-2 text-xs text-gray-500">
-          <span>ℹ️</span>
+          <span>
+            <HugeiconsIcon icon={InformationCircleIcon} size={14} />
+          </span>
           <p className="font-mono">
             Unstaking initiates on-chain withdrawal. Funds will be available in your wallet after
             transaction confirmation (typically 2-5 minutes).
           </p>
         </div>
         <div className="flex items-start space-x-2 text-xs text-gray-500">
-          <span>ℹ️</span>
+          <span>
+            <HugeiconsIcon icon={InformationCircleIcon} size={14} />
+          </span>
           <p className="font-mono">
             A 0.5% withdrawal fee applies to cover gas costs for autonomous operations.
           </p>

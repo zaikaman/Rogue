@@ -1,4 +1,6 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { ChartLineData01Icon } from '@hugeicons/core-free-icons'
 
 interface YieldChartProps {
   data: Array<{
@@ -29,7 +31,9 @@ export default function YieldChart({ data, height = 300 }: YieldChartProps) {
 
       {chartData.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-4xl mb-4">📈</div>
+          <div className="text-teal-glow mb-4 flex justify-center">
+            <HugeiconsIcon icon={ChartLineData01Icon} size={40} />
+          </div>
           <p className="text-gray-400 mb-2">No historical data yet</p>
           <p className="text-sm text-gray-500 font-mono">
             Yield tracking starts after first position creation

@@ -1,3 +1,6 @@
+import { HugeiconsIcon } from '@hugeicons/react'
+import { PlusMinusIcon } from '@hugeicons/core-free-icons'
+
 export default function Settings() {
   return (
     <div className="space-y-6">
@@ -46,7 +49,9 @@ export default function Settings() {
           <div className="grid grid-cols-2 gap-4 mt-4">
             <div className="bg-noir-gray/30 rounded-sm p-3">
               <div className="text-xs text-gray-500 font-mono mb-1">Trigger</div>
-              <div className="text-white font-mono">±5% APY</div>
+              <div className="text-white font-mono flex items-center gap-1">
+                <HugeiconsIcon icon={PlusMinusIcon} size={14} /> 5% APY
+              </div>
             </div>
             <div className="bg-noir-gray/30 rounded-sm p-3">
               <div className="text-xs text-gray-500 font-mono mb-1">Max Slippage</div>

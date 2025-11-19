@@ -1,7 +1,7 @@
 import '@rainbow-me/rainbowkit/styles.css';
 import { ConnectButton, RainbowKitProvider, getDefaultConfig } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
-import { polygon } from 'wagmi/chains';
+import { polygonAmoy } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
@@ -9,7 +9,7 @@ const queryClient = new QueryClient();
 const config = getDefaultConfig({
   appName: 'Rogue DeFi Yield Optimizer',
   projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || 'YOUR_PROJECT_ID',
-  chains: [polygon],
+  chains: [polygonAmoy],
   ssr: false,
 });
 

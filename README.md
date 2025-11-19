@@ -31,7 +31,7 @@ Rogue/
 
 - Node.js 18+ 
 - pnpm or npm
-- Polygon wallet with MATIC for gas
+- Polygon Amoy wallet with POL/MATIC for gas
 - Alchemy API key
 - Supabase account
 - OpenAI API key

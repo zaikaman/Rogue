@@ -5,7 +5,7 @@ import { logger } from './logger.js';
 let provider: JsonRpcProvider | null = null;
 
 /**
- * Get or create Alchemy RPC provider for Polygon mainnet
+ * Get or create Alchemy RPC provider for Polygon Amoy testnet
  */
 export function getProvider(): JsonRpcProvider {
   if (provider) {
@@ -19,11 +19,11 @@ export function getProvider(): JsonRpcProvider {
   }
 
   provider = new JsonRpcProvider(rpcUrl, {
-    chainId: 137,
-    name: 'polygon',
+    chainId: 80002,
+    name: 'polygon-amoy',
   });
 
-  logger.info('Polygon RPC provider initialized');
+  logger.info('Polygon Amoy RPC provider initialized');
   return provider;
 }
 

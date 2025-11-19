@@ -1,5 +1,15 @@
 import { useState, useEffect } from 'react'
 import { api, Transaction } from '../services/api'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { 
+  Coins01Icon, 
+  RepeatIcon, 
+  GiftIcon, 
+  Upload01Icon, 
+  BalanceScaleIcon, 
+  Note01Icon,
+  File01Icon
+} from '@hugeicons/core-free-icons'
 
 interface TransactionHistoryProps {
   walletAddress: string | null
@@ -55,17 +65,17 @@ export default function TransactionHistory({ walletAddress, positionId }: Transa
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'stake':
-        return '💰'
+        return Coins01Icon
       case 'compound':
-        return '🔄'
+        return RepeatIcon
       case 'claim':
-        return '🎁'
+        return GiftIcon
       case 'unstake':
-        return '📤'
+        return Upload01Icon
       case 'rebalance':
-        return '⚖️'
+        return BalanceScaleIcon
       default:
-        return '📝'
+        return Note01Icon
     }
   }
 
@@ -105,7 +115,9 @@ export default function TransactionHistory({ walletAddress, positionId }: Transa
           </div>
         ) : filteredTransactions.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">📜</div>
+            <div className="text-teal-glow mb-4 flex justify-center">
+              <HugeiconsIcon icon={File01Icon} size={64} />
+            </div>
             <p className="text-gray-400 mb-2">No transactions yet</p>
             <p className="text-sm text-gray-500 font-mono">
               Transaction history will appear here after your first action
@@ -120,7 +132,9 @@ export default function TransactionHistory({ walletAddress, positionId }: Transa
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center space-x-3">
-                    <span className="text-2xl">{getTypeIcon(tx.type)}</span>
+                    <span className="text-teal-glow">
+                      <HugeiconsIcon icon={getTypeIcon(tx.type)} size={24} />
+                    </span>
                     <div>
                       <div className="text-white font-bold uppercase text-sm">{tx.type}</div>
                       <div className="text-xs text-gray-500 font-mono">
