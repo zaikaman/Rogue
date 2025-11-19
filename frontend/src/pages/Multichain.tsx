@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { api } from '../services/api'
 
 interface YieldOpportunity {
   protocol: string
@@ -9,15 +10,6 @@ interface YieldOpportunity {
   risk: 'low' | 'medium' | 'high'
   type: 'yield' | 'lp' | 'stake'
 }
-
-const OPPORTUNITIES: YieldOpportunity[] = [
-  { protocol: 'Aave V3', chain: 'amoy', asset: 'USDC', apy: 12.4, tvl: '$842M', risk: 'low', type: 'yield' },
-  { protocol: 'Compound', chain: 'base_sepolia', asset: 'DAI', apy: 9.8, tvl: '$421M', risk: 'low', type: 'yield' },
-  { protocol: 'Lido', chain: 'sepolia', asset: 'ETH', apy: 4.5, tvl: '$8.2B', risk: 'low', type: 'stake' },
-  { protocol: 'Uniswap V3', chain: 'amoy', asset: 'USDC-ETH', apy: 18.7, tvl: '$1.2B', risk: 'medium', type: 'lp' },
-  { protocol: 'SushiSwap', chain: 'sepolia', asset: 'MATIC-USDC', apy: 24.3, tvl: '$156M', risk: 'high', type: 'lp' },
-  { protocol: 'Stargate', chain: 'base_sepolia', asset: 'USDC', apy: 8.2, tvl: '$312M', risk: 'low', type: 'yield' },
-]
 
 const CHAIN_INFO = {
   amoy: { name: 'Polygon Amoy', icon: '⬡', color: 'from-purple-500 to-violet-600', textColor: 'text-purple-400' },
@@ -32,12 +24,30 @@ const RISK_COLORS = {
 }
 
 export default function Multichain() {
+  const [opportunities, setOpportunities] = useState<YieldOpportunity[]>([])
+  const [isLoading, setIsLoading] = useState(false)
   const [selectedChain, setSelectedChain] = useState<string>('all')
   const [selectedRisk, setSelectedRisk] = useState<string>('all')
   const [sortBy, setSortBy] = useState<'apy' | 'tvl'>('apy')
   const [autoOptimize, setAutoOptimize] = useState(true)
 
-  const filteredOpps = OPPORTUNITIES
+  useEffect(() => {
+    const fetchOpportunities = async () => {
+      setIsLoading(true)
+      try {
+        const data = await api.getMultichainOpportunities()
+        setOpportunities(data)
+      } catch (error) {
+        console.error('Failed to fetch opportunities:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchOpportunities()
+  }, [])
+
+  const filteredOpps = opportunities
     .filter(opp => selectedChain === 'all' || opp.chain === selectedChain)
     .filter(opp => selectedRisk === 'all' || opp.risk === selectedRisk)
     .sort((a, b) => {
@@ -46,8 +56,10 @@ export default function Multichain() {
     })
 
   const bestAPY = filteredOpps[0]
-  const totalChains = new Set(OPPORTUNITIES.map(o => o.chain)).size
-  const avgAPY = OPPORTUNITIES.reduce((sum, o) => sum + o.apy, 0) / OPPORTUNITIES.length
+  const totalChains = new Set(opportunities.map(o => o.chain)).size
+  const avgAPY = opportunities.length > 0 
+    ? opportunities.reduce((sum, o) => sum + o.apy, 0) / opportunities.length
+    : 0
 
   return (
     <div className="space-y-6">
@@ -189,7 +201,12 @@ export default function Multichain() {
 
       {/* Opportunities Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {filteredOpps.map((opp, index) => {
+        {isLoading ? (
+          <div className="col-span-full text-center py-12 text-gray-400">Loading opportunities...</div>
+        ) : filteredOpps.length === 0 ? (
+          <div className="col-span-full text-center py-12 text-gray-400">No opportunities found</div>
+        ) : (
+          filteredOpps.map((opp, index) => {
           const chainInfo = CHAIN_INFO[opp.chain as keyof typeof CHAIN_INFO]
           return (
             <div
@@ -252,7 +269,7 @@ export default function Multichain() {
               </div>
             </div>
           )
-        })}
+        }))}
       </div>
 
       {/* Auto-Optimization Info */}

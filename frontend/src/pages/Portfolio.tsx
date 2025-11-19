@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useAccount } from 'wagmi'
+import { api } from '../services/api'
 
 interface TokenHolding {
   symbol: string
@@ -8,7 +10,7 @@ interface TokenHolding {
   chain: string
   apy?: number
   protocol?: string
-  icon: string
+  icon?: string
 }
 
 const CHAIN_COLORS = {
@@ -24,14 +26,37 @@ const CHAIN_ICONS = {
 }
 
 export default function Portfolio() {
-  const [holdings] = useState<TokenHolding[]>([
-    { symbol: 'USDC', name: 'USD Coin', balance: '2,450.00', valueUsd: 2450, chain: 'amoy', apy: 8.2, protocol: 'Aave v3', icon: '💵' },
-    { symbol: 'ETH', name: 'Ethereum', balance: '0.847', valueUsd: 1564.82, chain: 'sepolia', apy: 4.5, protocol: 'Lido', icon: '⟠' },
-    { symbol: 'MATIC', name: 'Polygon', balance: '1,234.56', valueUsd: 1074.07, chain: 'amoy', icon: '⬡' },
-    { symbol: 'DAI', name: 'Dai Stablecoin', balance: '850.00', valueUsd: 850, chain: 'base_sepolia', apy: 6.3, protocol: 'Compound', icon: '◈' },
-  ])
+  const { address: walletAddress, isConnected } = useAccount()
+  const [holdings, setHoldings] = useState<TokenHolding[]>([])
+  const [isLoading, setIsLoading] = useState(false)
   const [selectedChain, setSelectedChain] = useState<string>('all')
   const [sortBy, setSortBy] = useState<'value' | 'apy'>('value')
+
+  useEffect(() => {
+    if (!isConnected || !walletAddress) {
+      setHoldings([])
+      return
+    }
+
+    const fetchPortfolio = async () => {
+      setIsLoading(true)
+      try {
+        const data = await api.getPortfolioHoldings(walletAddress)
+        // Map API data to UI model (adding icons if needed)
+        const mappedHoldings = data.map((h: any) => ({
+          ...h,
+          icon: h.symbol === 'USDC' ? '💵' : h.symbol === 'ETH' ? '⟠' : h.symbol === 'MATIC' ? '⬡' : '◈'
+        }))
+        setHoldings(mappedHoldings)
+      } catch (error) {
+        console.error('Failed to fetch portfolio:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchPortfolio()
+  }, [walletAddress, isConnected])
 
   // Calculate totals
   const totalValue = holdings.reduce((sum, h) => sum + h.valueUsd, 0)
@@ -92,8 +117,11 @@ export default function Portfolio() {
       </div>
 
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-        {/* Total Value */}
+      {isLoading ? (
+        <div className="text-center py-12 text-gray-400">Loading portfolio...</div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+          {/* Total Value */}
         <div className="relative bg-gradient-to-br from-slate-900 to-slate-950 border-2 border-emerald-500/30 rounded-2xl p-6 overflow-hidden group hover:border-emerald-500/60 transition-all">
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <div className="relative z-10">
@@ -160,7 +188,8 @@ export default function Portfolio() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      )}
 
       {/* Holdings Table */}
       <div className="bg-slate-900/80 border-2 border-slate-800 rounded-2xl overflow-hidden">

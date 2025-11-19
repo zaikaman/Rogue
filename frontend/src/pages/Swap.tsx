@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { useAccount } from 'wagmi'
+import { api } from '../services/api'
 
 interface SwapQuote {
   fromToken: string
@@ -24,6 +26,7 @@ const SUPPORTED_CHAINS = [
 ]
 
 export default function Swap() {
+  const { address: walletAddress } = useAccount()
   const [selectedChain, setSelectedChain] = useState('amoy')
   const [fromToken, setFromToken] = useState('USDC')
   const [toToken, setToToken] = useState('ETH')
@@ -43,8 +46,7 @@ export default function Swap() {
     const fetchQuote = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/api/swap/quote?chain=${selectedChain}&fromToken=${fromToken}&toToken=${toToken}&amount=${amount}`)
-        const data = await response.json()
+        const data = await api.getSwapQuote(selectedChain, fromToken, toToken, amount)
         setQuote(data)
       } catch (error) {
         console.error('Failed to fetch quote:', error)
@@ -58,24 +60,13 @@ export default function Swap() {
   }, [amount, fromToken, toToken, selectedChain])
 
   const handleSwap = async () => {
-    if (!quote) return
+    if (!quote || !walletAddress) return
     
     setSwapStatus('loading')
     
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/api/swap/execute`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chain: selectedChain,
-          fromToken,
-          toToken,
-          amount,
-          walletAddress: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb1' // TODO: Get from wallet context
-        })
-      })
+      const data = await api.executeSwap(selectedChain, fromToken, toToken, amount, walletAddress)
       
-      const data = await response.json()
       setTxHash(data.txHash)
       setSwapStatus('success')
       

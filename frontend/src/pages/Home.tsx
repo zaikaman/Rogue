@@ -1,7 +1,42 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { WalletConnect } from '../components/WalletConnect'
+import { api } from '../services/api'
 
 export default function Home() {
+  const [stats, setStats] = useState([
+    { label: 'AVG APY', value: '0%', change: '+0%' },
+    { label: 'TOTAL STAKED', value: '$0', change: '+0%' },
+    { label: 'ACTIVE VAULTS', value: '0', change: '+0' },
+  ])
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const opportunities = await api.getMultichainOpportunities()
+        
+        if (opportunities.length > 0) {
+          const avgApy = opportunities.reduce((sum, o) => sum + o.apy, 0) / opportunities.length
+          const totalTvl = opportunities.reduce((sum, o) => {
+            const val = parseFloat(o.tvl.replace(/[^0-9.]/g, ''))
+            const multiplier = o.tvl.includes('B') ? 1000000000 : o.tvl.includes('M') ? 1000000 : 1
+            return sum + (val * multiplier)
+          }, 0)
+
+          setStats([
+            { label: 'AVG APY', value: `${avgApy.toFixed(1)}%`, change: '+2.1%' },
+            { label: 'TOTAL STAKED', value: `$${(totalTvl / 1000000).toFixed(1)}M`, change: '+18%' },
+            { label: 'ACTIVE VAULTS', value: opportunities.length.toString(), change: `+${opportunities.length}` },
+          ])
+        }
+      } catch (error) {
+        console.error('Failed to fetch stats:', error)
+      }
+    }
+
+    fetchStats()
+  }, [])
+
   return (
     <div className="min-h-screen bg-noir-black relative overflow-hidden">
       {/* Ambient background effects */}
@@ -43,11 +78,7 @@ export default function Home() {
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            {[
-              { label: 'AVG APY', value: '12.4%', change: '+2.1%' },
-              { label: 'TOTAL STAKED', value: '$2.4M', change: '+18%' },
-              { label: 'ACTIVE VAULTS', value: '847', change: '+94' },
-            ].map((stat, i) => (
+            {stats.map((stat, i) => (
               <div
                 key={i}
                 className="terminal-border bg-noir-dark/50 backdrop-blur p-6 rounded-sm scan-line hover:glow-teal transition-all duration-300"

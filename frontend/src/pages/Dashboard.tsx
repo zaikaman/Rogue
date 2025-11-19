@@ -1,52 +1,70 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { api } from '../services/api'
+import { useAccount } from 'wagmi'
+import { api, Transaction } from '../services/api'
 import APYCard from '../components/APYCard'
 import StakeForm from '../components/StakeForm'
 import RiskSlider from '../components/RiskSlider'
 import TransactionHistory from '../components/TransactionHistory'
 
 export default function Dashboard() {
+  const { address: walletAddress, isConnected } = useAccount()
   const [riskProfile, setRiskProfile] = useState<'low' | 'medium' | 'high'>('medium')
-  const [walletAddress, setWalletAddress] = useState<string | null>(null)
   const [positions, setPositions] = useState<any[]>([])
+  const [transactions, setTransactions] = useState<Transaction[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [totalRewards, setTotalRewards] = useState('0')
+  const [totalEarned, setTotalEarned] = useState('0')
 
-  // Connect wallet from context
+  // Fetch data when wallet is connected
   useEffect(() => {
-    // TODO: Get from actual wallet connection context
-    const walletAddr = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb1'
-    setWalletAddress(walletAddr)
-  }, [])
+    if (!isConnected || !walletAddress) {
+      setPositions([])
+      setTransactions([])
+      setTotalRewards('0')
+      setTotalEarned('0')
+      return
+    }
 
-  // Fetch positions when wallet is connected
-  useEffect(() => {
-    if (!walletAddress) return
-
-    const fetchPositions = async () => {
+    const fetchData = async () => {
       setIsLoading(true)
       try {
-        const data = await api.getPositions(walletAddress)
-        setPositions(data || [])
+        const [positionsData, transactionsData] = await Promise.all([
+          api.getPositions(walletAddress),
+          api.getTransactions(walletAddress)
+        ])
         
-        // Calculate total claimable rewards (simplified)
-        const rewards = (data || []).reduce((sum: number, p: any) => {
+        setPositions(positionsData || [])
+        setTransactions(transactionsData || [])
+        
+        // Calculate total claimable rewards and earned value (simplified simulation)
+        let rewardsSum = 0
+        let earnedSum = 0
+        
+        ;(positionsData || []).forEach((p: any) => {
           const daysActive = Math.floor(
             (Date.now() - new Date(p.created_at).getTime()) / (1000 * 60 * 60 * 24)
           )
-          return sum + (parseFloat(p.amount || '0') * daysActive * 0.001)
-        }, 0)
-        setTotalRewards(rewards.toFixed(4))
+          // Simulate 0.1% daily reward rate for ATP
+          rewardsSum += parseFloat(p.amount || '0') * daysActive * 0.001
+          
+          // Simulate earned interest based on APY
+          const apy = p.strategy?.expectedApy || 0
+          const earned = parseFloat(p.amount || '0') * (apy / 100) * (daysActive / 365)
+          earnedSum += earned
+        })
+        
+        setTotalRewards(rewardsSum.toFixed(4))
+        setTotalEarned(earnedSum.toFixed(2))
       } catch (error) {
-        console.error('Failed to fetch positions:', error)
+        console.error('Failed to fetch dashboard data:', error)
       } finally {
         setIsLoading(false)
       }
     }
 
-    fetchPositions()
-  }, [walletAddress])
+    fetchData()
+  }, [walletAddress, isConnected])
 
   // Calculate aggregate stats
   const totalStaked = positions.reduce((sum, p) => sum + parseFloat(p.amount || '0'), 0)
@@ -112,20 +130,20 @@ export default function Dashboard() {
         <APYCard
           title="CURRENT APY"
           value={`${avgAPY}%`}
-          change="+2.1%"
-          protocol="Aave V3"
+          change={positions.length > 0 ? "+2.1%" : "0%"}
+          protocol="Avg. Yield"
         />
         <APYCard
           title="TOTAL STAKED"
-          value={`$${totalStaked.toFixed(2)}`}
-          change="+$1,200"
-          protocol="Mixed"
+          value={`$${totalStaked.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          change={positions.length > 0 ? "+$1,200" : "$0"}
+          protocol="All Pools"
         />
         <APYCard
           title="TOTAL EARNED"
-          value="$847.32"
-          change="+$47"
-          protocol="24h"
+          value={`$${totalEarned}`}
+          change={positions.length > 0 ? "+$47" : "$0"}
+          protocol="Est. Yield"
         />
         <APYCard
           title="ATP REWARDS"
@@ -139,7 +157,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Stake Form */}
         <div className="lg:col-span-2">
-          <StakeForm riskProfile={riskProfile} walletAddress={walletAddress} />
+          <StakeForm riskProfile={riskProfile} walletAddress={walletAddress || null} />
         </div>
 
         {/* Risk Profile */}
@@ -255,7 +273,7 @@ export default function Dashboard() {
       </div>
 
       {/* Transaction History */}
-      <TransactionHistory walletAddress={walletAddress} />
+      <TransactionHistory walletAddress={walletAddress || null} />
 
       {/* AI Agent Activity Log */}
       <div className="terminal-border bg-noir-dark/50 rounded-sm scan-line">
@@ -266,21 +284,42 @@ export default function Dashboard() {
           </h3>
         </div>
         <div className="p-6 font-mono text-sm space-y-2">
-          {[
-            { time: '14:32:18', agent: 'RESEARCHER', action: 'Scanning Aave V3 yields...', status: 'success' },
-            { time: '14:32:15', agent: 'ANALYZER', action: 'Optimizing allocation strategy', status: 'success' },
-            { time: '14:32:10', agent: 'EXECUTOR', action: 'Compound completed: +$12.34', status: 'success' },
-          ].map((log, i) => (
-            <div
-              key={i}
-              className="flex items-start space-x-3 p-3 bg-noir-gray/30 rounded-sm hover:bg-noir-gray/50 transition-colors"
-            >
-              <span className="text-gray-500">[{log.time}]</span>
-              <span className="text-teal-glow">{log.agent}:</span>
-              <span className="text-gray-300 flex-1">{log.action}</span>
-              <span className="text-success">✓</span>
-            </div>
-          ))}
+          {transactions.length === 0 ? (
+            <div className="text-gray-500 italic">No recent agent activity detected.</div>
+          ) : (
+            transactions.slice(0, 5).map((tx, i) => {
+              let agent = 'EXECUTOR'
+              let action = 'Unknown action'
+              
+              if (tx.type === 'stake') {
+                agent = 'EXECUTOR'
+                action = `Staked assets into position`
+              } else if (tx.type === 'compound') {
+                agent = 'EXECUTOR'
+                action = `Compounded rewards`
+              } else if (tx.type === 'rebalance') {
+                agent = 'ANALYZER'
+                action = `Rebalanced portfolio strategy`
+              } else if (tx.type === 'claim') {
+                agent = 'EXECUTOR'
+                action = `Claimed rewards`
+              }
+
+              return (
+                <div
+                  key={tx.id || i}
+                  className="flex items-start space-x-3 p-3 bg-noir-gray/30 rounded-sm hover:bg-noir-gray/50 transition-colors"
+                >
+                  <span className="text-gray-500">[{new Date(tx.created_at).toLocaleTimeString()}]</span>
+                  <span className="text-teal-glow">{agent}:</span>
+                  <span className="text-gray-300 flex-1">{action}</span>
+                  <span className={tx.status === 'confirmed' ? "text-success" : "text-warning"}>
+                    {tx.status === 'confirmed' ? '✓' : '...'}
+                  </span>
+                </div>
+              )
+            })
+          )}
         </div>
       </div>
     </div>

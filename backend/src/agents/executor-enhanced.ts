@@ -1,16 +1,16 @@
 import { AgentBuilder, createTool } from '@iqai/adk';
 import * as z from 'zod';
+import { ethers } from 'ethers';
 import dedent from 'dedent';
 import { getSupabaseClient } from '../services/supabase';
 import { logger } from '../utils/logger';
+import { recordFeeCollection } from '../services/tokenomics';
 import {
   executeDeposit,
   executeSwap,
   executeBridge,
   executeCompound,
   executeStake,
-  executeUnstake,
-  executeClaim,
   executeAddLiquidity
 } from '../services/transaction-executor';
 
@@ -153,34 +153,6 @@ const executeBridgeTool = createTool({
       throw error;
     }
   }
-        wallet_address: recipient,
-        tx_hash: mockTxHash,
-        type: 'rebalance',
-        status: 'confirmed',
-        amount,
-        token,
-        gas_cost: '0.01',
-        notes: `Bridged ${ethers.formatUnits(amount, 6)} ${token} from ${sourceChain} to ${destChain}`,
-        metadata: { sourceChain, destChain },
-        created_at: new Date().toISOString(),
-        confirmed_at: new Date().toISOString()
-      });
-
-      return {
-        txHash: mockTxHash,
-        status: 'confirmed',
-        action: 'bridge',
-        sourceChain,
-        destChain,
-        token,
-        amount,
-        estimatedTime: '5 minutes'
-      };
-    } catch (error: any) {
-      logger.error('Bridge execution failed', { error: error.message });
-      throw error;
-    }
-  }
 });
 
 /**
@@ -190,28 +162,31 @@ const executeStakeTool = createTool({
   name: 'execute_stake',
   description: 'Stake ETH via Lido',
   schema: z.object({
-    positionId: z.string(),
+    token: z.string(),
     chain: z.enum(['mumbai', 'sepolia', 'base_sepolia']),
     amount: z.string(),
+    riskProfile: z.enum(['low', 'medium', 'high']),
     recipient: z.string()
   }) as any,
-  fn: async ({ positionId, chain, amount, recipient }: any) => {
+  fn: async ({ token, chain, amount, riskProfile, recipient }: any) => {
     try {
       logger.info('Executing stake', {
-        positionId,
+        token,
         chain,
         amount
       });
 
       const result = await executeStake({
-        positionId,
+        token,
         chain,
         amount,
-        recipient
+        riskProfile,
+        walletAddress: recipient
       });
 
       return {
         txHash: result.txHash,
+        positionId: result.positionId,
         status: 'confirmed',
         action: 'stake',
         protocol: 'Lido',
@@ -236,14 +211,16 @@ const executeCompoundTool = createTool({
   schema: z.object({
     positionId: z.string(),
     protocol: z.string(),
+    chain: z.enum(['mumbai', 'sepolia', 'base_sepolia']),
     yieldAmount: z.string(),
     recipient: z.string()
   }) as any,
-  fn: async ({ positionId, protocol, yieldAmount, recipient }: any) => {
+  fn: async ({ positionId, protocol, chain, yieldAmount, recipient }: any) => {
     try {
       logger.info('Executing compound', {
         positionId,
         protocol,
+        chain,
         yieldAmount
       });
 
@@ -263,6 +240,7 @@ const executeCompoundTool = createTool({
       const result = await executeCompound({
         positionId,
         protocol,
+        chain,
         yieldAmount: fees.userReceives,
         recipient
       });
@@ -293,26 +271,32 @@ const executeAddLiquidityTool = createTool({
   description: 'Add liquidity to Uniswap V3 pool',
   schema: z.object({
     positionId: z.string(),
-    chain: z.enum(['mumbai', 'sepolia']),
-    pool: z.string(),
-    amount0: z.string(),
-    amount1: z.string(),
+    chain: z.enum(['mumbai', 'sepolia', 'base_sepolia']),
+    protocol: z.string(),
+    tokenA: z.string(),
+    tokenB: z.string(),
+    amountA: z.string(),
+    amountB: z.string(),
     recipient: z.string()
   }) as any,
-  fn: async ({ positionId, chain, pool, amount0, amount1, recipient }: any) => {
+  fn: async ({ positionId, chain, protocol, tokenA, tokenB, amountA, amountB, recipient }: any) => {
     try {
       logger.info('Executing add liquidity', {
         positionId,
         chain,
-        pool
+        protocol,
+        tokenA,
+        tokenB
       });
 
       const result = await executeAddLiquidity({
         positionId,
         chain,
-        pool,
-        amount0,
-        amount1,
+        protocol,
+        tokenA,
+        tokenB,
+        amountA,
+        amountB,
         recipient
       });
 
@@ -321,8 +305,8 @@ const executeAddLiquidityTool = createTool({
         status: 'confirmed',
         action: 'add_liquidity',
         chain,
-        pool,
-        liquidity: (BigInt(amount0) + BigInt(amount1)).toString(),
+        protocol,
+        liquidity: (BigInt(amountA) + BigInt(amountB)).toString(),
         gasUsed: result.gasUsed
       };
     } catch (error: any) {

@@ -1,4 +1,5 @@
 import cron from 'node-cron';
+import { fileURLToPath } from 'url';
 import { compoundPositionWorkflow } from '../workflows/yield-optimization';
 import { getSupabaseClient } from '../services/supabase';
 import { getChainlinkPrice } from '../services/chainlink-oracle';
@@ -254,7 +255,7 @@ export function initializeAutonomousCompound() {
 }
 
 // Allow manual execution for testing
-if (require.main === module) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   compoundEligiblePositions()
     .then(() => process.exit(0))
     .catch((error) => {

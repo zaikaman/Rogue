@@ -40,17 +40,11 @@ export default function PositionDetail() {
         const rewards = parseFloat(positionData.amount) * daysActive * 0.001
         setEstimatedRewards(rewards.toFixed(4))
 
-        // Use real data if available, otherwise generate mock
+        // Use real data if available
         if (historyData && historyData.length > 0) {
           setYieldHistory(historyData)
         } else {
-          // Fallback: Generate mock yield history
-          const mockHistory = Array.from({ length: 30 }, (_, i) => ({
-            timestamp: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString(),
-            apy: 10 + Math.random() * 5,
-            value: parseFloat(positionData.amount) * (1 + i * 0.001)
-          }))
-          setYieldHistory(mockHistory)
+          setYieldHistory([])
         }
       } catch (error) {
         console.error('Failed to fetch position:', error)

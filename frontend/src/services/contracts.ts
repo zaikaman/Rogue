@@ -1,5 +1,5 @@
-import { Contract, BrowserProvider } from 'ethers'
-import { getProvider, getSigner } from './wallet'
+import { Contract } from 'ethers'
+import { getSigner } from './wallet'
 
 /**
  * ERC-20 ABI (minimal for balance and approve)

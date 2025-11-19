@@ -53,7 +53,7 @@ interface WorkflowInput {
   token: 'USDC';
   amount: number;
   riskProfile: 'low' | 'medium' | 'high';
-  action: 'create' | 'compound' | 'unstake';
+  action: 'create' | 'compound' | 'unstake' | 'rebalance';
 }
 
 interface WorkflowOutput {
@@ -102,7 +102,7 @@ export async function runYieldOptimizationWorkflow(
     // STEP 1: Researcher Agent - Scan markets
     logger.info('[Workflow Step 1] Running Researcher agent', { sessionId });
     try {
-      const marketData = await runResearcherAgent(sessionId);
+      const marketData = await runResearcherAgent(input.token);
       steps.researcher = {
         status: 'completed',
         data: marketData,
@@ -120,11 +120,8 @@ export async function runYieldOptimizationWorkflow(
     logger.info('[Workflow Step 2] Running Analyzer agent', { sessionId });
     try {
       const strategy = await runAnalyzerAgent(
-        input.positionId,
-        input.riskProfile,
-        input.amount,
-        input.token,
-        steps.researcher.data
+        steps.researcher.data,
+        input.riskProfile
       );
       steps.analyzer = {
         status: 'completed',
