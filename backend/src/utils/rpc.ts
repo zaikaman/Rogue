@@ -5,25 +5,25 @@ import { logger } from './logger.js';
 let provider: JsonRpcProvider | null = null;
 
 /**
- * Get or create Alchemy RPC provider for Polygon Amoy testnet
+ * Get or create RPC provider for Base Mainnet
  */
 export function getProvider(): JsonRpcProvider {
   if (provider) {
     return provider;
   }
 
-  const rpcUrl = config.POLYGON_RPC_URL;
+  const rpcUrl = config.BASE_RPC_URL;
   
   if (!rpcUrl) {
-    throw new Error('POLYGON_RPC_URL not configured');
+    throw new Error('BASE_RPC_URL not configured');
   }
 
   provider = new JsonRpcProvider(rpcUrl, {
-    chainId: 80002,
-    name: 'polygon-amoy',
+    chainId: 8453,
+    name: 'base',
   });
 
-  logger.info('Polygon Amoy RPC provider initialized');
+  logger.info('Base Mainnet RPC provider initialized');
   return provider;
 }
 

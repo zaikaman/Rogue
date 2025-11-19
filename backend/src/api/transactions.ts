@@ -51,26 +51,12 @@ router.get('/:walletAddress', async (req: Request, res: Response, next: NextFunc
     }
 
     res.json({
-      success: true,
-      data: {
-        transactions: transactions?.map(tx => ({
-          id: tx.id,
-          positionId: tx.position_id,
-          walletAddress: tx.wallet_address,
-          txHash: tx.tx_hash,
-          type: tx.type,
-          status: tx.status,
-          gasCost: tx.gas_cost,
-          notes: tx.notes,
-          createdAt: tx.created_at,
-          confirmedAt: tx.confirmed_at
-        })) || [],
-        pagination: {
-          total: count || 0,
-          limit: Number(limit),
-          offset: Number(offset),
-          hasMore: count ? (Number(offset) + Number(limit)) < count : false
-        }
+      data: transactions || [],
+      pagination: {
+        total: count || 0,
+        limit: Number(limit),
+        offset: Number(offset),
+        hasMore: count ? (Number(offset) + Number(limit)) < count : false
       }
     });
   } catch (error) {
@@ -105,28 +91,12 @@ router.get('/position/:positionId', async (req: Request, res: Response, next: Ne
     }
 
     res.json({
-      success: true,
-      data: {
-        transactions: transactions?.map(tx => ({
-          id: tx.id,
-          positionId: tx.position_id,
-          txHash: tx.tx_hash,
-          type: tx.tx_type,
-          status: tx.status,
-          amount: tx.amount,
-          token: tx.token,
-          gasCost: tx.gas_cost,
-          notes: tx.notes,
-          metadata: tx.metadata,
-          createdAt: tx.created_at,
-          confirmedAt: tx.confirmed_at
-        })) || [],
-        pagination: {
-          total: count || 0,
-          limit: Number(limit),
-          offset: Number(offset),
-          hasMore: count ? (Number(offset) + Number(limit)) < count : false
-        }
+      data: transactions || [],
+      pagination: {
+        total: count || 0,
+        limit: Number(limit),
+        offset: Number(offset),
+        hasMore: count ? (Number(offset) + Number(limit)) < count : false
       }
     });
   } catch (error) {

@@ -8,26 +8,22 @@ import { getSupabaseClient } from './supabase';
 import { logger } from '../utils/logger';
 import { depositToProtocol, compoundYield, claimRewards } from '../contracts/yield-harvester';
 import { stakeTokens, unstakeTokens } from '../contracts/staking-proxy';
-import { buildSwapTransaction } from './1inch-api';
+import { executeAerodromeSwap } from './aerodrome-swap';
 import { buildBridgeTransaction } from './layerzero-bridge';
 
 /**
- * Get wallet signer for executor
+ * Get executor wallet for Base Mainnet
  */
-function getExecutorWallet(chain: 'mumbai' | 'sepolia' | 'base_sepolia' = 'mumbai'): ethers.Wallet {
+function getExecutorWallet(): ethers.Wallet {
   const privateKey = process.env.EXECUTOR_PRIVATE_KEY;
   if (!privateKey) {
     throw new Error('EXECUTOR_PRIVATE_KEY not configured');
   }
   
-  // Get chain-specific RPC URL
-  const rpcUrls = {
-    mumbai: process.env.MUMBAI_RPC_URL || 'https://rpc-mumbai.maticvigil.com',
-    sepolia: process.env.SEPOLIA_RPC_URL || 'https://rpc.sepolia.org',
-    base_sepolia: process.env.BASE_SEPOLIA_RPC_URL || 'https://sepolia.base.org'
-  };
+  // Get Base Mainnet RPC URL
+  const rpcUrl = process.env.BASE_RPC_URL || 'https://mainnet.base.org';
   
-  const provider = new ethers.JsonRpcProvider(rpcUrls[chain]);
+  const provider = new ethers.JsonRpcProvider(rpcUrl);
   return new ethers.Wallet(privateKey, provider);
 }
 
@@ -74,7 +70,7 @@ async function recordTransaction(data: {
 export async function executeDeposit(params: {
   positionId: string;
   protocol: string;
-  chain: 'mumbai' | 'sepolia' | 'base_sepolia';
+  chain: 'base';
   token: string;
   amount: string;
   recipient: string;
@@ -82,13 +78,14 @@ export async function executeDeposit(params: {
   try {
     logger.info('Executing deposit', params);
     
-    const wallet = getExecutorWallet(params.chain);
+    const wallet = getExecutorWallet();
     const txHash = await depositToProtocol(
       wallet,
       params.positionId,
       params.protocol,
       params.token,
-      params.amount
+      params.amount,
+      params.recipient // Pass user address for fee deduction
     );
     
     // Wait for confirmation and get gas used
@@ -119,38 +116,48 @@ export async function executeDeposit(params: {
 }
 
 /**
- * Execute token swap via 1inch
+ * Execute token swap (uses Aerodrome on Base Mainnet)
  */
 export async function executeSwap(params: {
   positionId: string;
-  chain: 'mumbai' | 'sepolia' | 'base_sepolia';
+  chain: 'base';
   fromToken: string;
   toToken: string;
   amount: string;
   recipient: string;
 }): Promise<{ txHash: string; gasUsed: string }> {
   try {
-    logger.info('Executing swap', params);
+    logger.info('Executing swap on Base Mainnet via Aerodrome', params);
     
-    const swapTx = await buildSwapTransaction(
-      params.chain,
+    // Use Aerodrome for Base Mainnet swaps (already integrated in YieldHarvester)
+    const wallet = getExecutorWallet();
+    
+    // First approve Aerodrome router to spend tokens
+    const tokenContract = new ethers.Contract(
+      params.fromToken,
+      ['function approve(address spender, uint256 amount) returns (bool)'],
+      wallet
+    );
+    
+    const approveTx = await tokenContract.approve(
+      '0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43', // Aerodrome Router
+      params.amount
+    );
+    await approveTx.wait();
+    logger.info('Token approved for Aerodrome swap');
+    
+    // Execute swap via Aerodrome
+    const txHash = await executeAerodromeSwap(
+      wallet,
       params.fromToken,
       params.toToken,
       params.amount,
-      params.recipient
+      50 // 0.5% slippage tolerance
     );
     
-    const wallet = getExecutorWallet(params.chain);
-    const tx = await wallet.sendTransaction({
-      to: swapTx.to,
-      data: swapTx.data,
-      value: swapTx.value,
-      gasLimit: swapTx.gas
-    });
-    
-    const receipt = await tx.wait();
+    if (!wallet.provider) throw new Error('Provider not available');
+    const receipt = await wallet.provider.getTransactionReceipt(txHash);
     if (!receipt) throw new Error('Transaction receipt not found');
-    const txHash = receipt.hash;
     const gasUsed = receipt.gasUsed ? ethers.formatUnits(receipt.gasUsed, 'gwei') : '0';
     
     await recordTransaction({
@@ -180,8 +187,8 @@ export async function executeSwap(params: {
  */
 export async function executeBridge(params: {
   positionId: string;
-  sourceChain: 'mumbai' | 'sepolia' | 'base_sepolia';
-  destChain: 'mumbai' | 'sepolia' | 'base_sepolia';
+  sourceChain: 'base';
+  destChain: 'base';
   token: string;
   amount: string;
   recipient: string;
@@ -197,7 +204,7 @@ export async function executeBridge(params: {
       params.recipient
     );
     
-    const wallet = getExecutorWallet(params.sourceChain);
+    const wallet = getExecutorWallet();
     const tx = await wallet.sendTransaction({
       to: bridgeTx.to,
       data: bridgeTx.data,
@@ -251,19 +258,20 @@ export async function executeBridge(params: {
 export async function executeCompound(params: {
   positionId: string;
   protocol: string;
-  chain: 'mumbai' | 'sepolia' | 'base_sepolia';
+  chain: 'base';
   yieldAmount: string;
   recipient: string;
 }): Promise<{ txHash: string; gasUsed: string }> {
   try {
     logger.info('Executing compound', params);
     
-    const wallet = getExecutorWallet(params.chain);
+    const wallet = getExecutorWallet();
     const txHash = await compoundYield(
       wallet,
       params.positionId,
       params.protocol,
-      params.yieldAmount
+      params.yieldAmount,
+      params.recipient // Pass user address for fee deduction
     );
     
     if (!wallet.provider) throw new Error('Provider not available');
@@ -298,13 +306,13 @@ export async function executeStake(params: {
   token: string;
   amount: string;
   riskProfile: 'low' | 'medium' | 'high';
-  chain: 'mumbai' | 'sepolia' | 'base_sepolia';
+  chain: 'base';
   walletAddress: string;
 }): Promise<{ positionId: string; txHash: string; gasUsed: string }> {
   try {
     logger.info('Executing stake', params);
     
-    const wallet = getExecutorWallet(params.chain);
+    const wallet = getExecutorWallet();
     const { positionId, txHash } = await stakeTokens(
       wallet,
       params.token,
@@ -343,13 +351,13 @@ export async function executeStake(params: {
  */
 export async function executeUnstake(params: {
   positionId: string;
-  chain: 'mumbai' | 'sepolia' | 'base_sepolia';
+  chain: 'base';
   walletAddress: string;
 }): Promise<{ amount: string; txHash: string; gasUsed: string }> {
   try {
     logger.info('Executing unstake', params);
     
-    const wallet = getExecutorWallet(params.chain);
+    const wallet = getExecutorWallet();
     const { amount, txHash } = await unstakeTokens(wallet, params.positionId);
     
     if (!wallet.provider) throw new Error('Provider not available');
@@ -382,14 +390,14 @@ export async function executeUnstake(params: {
  */
 export async function executeClaim(params: {
   positionId: string;
-  chain: 'mumbai' | 'sepolia' | 'base_sepolia';
+  chain: 'base';
   walletAddress: string;
   amount: string;
 }): Promise<{ txHash: string; gasUsed: string }> {
   try {
     logger.info('Executing claim', params);
     
-    const wallet = getExecutorWallet(params.chain);
+    const wallet = getExecutorWallet();
     const txHash = await claimRewards(
       wallet,
       params.positionId,

@@ -155,7 +155,7 @@ export default function TransactionHistory({ walletAddress, positionId }: Transa
                   <div className="flex justify-between">
                     <span className="text-gray-500 font-mono">TX Hash</span>
                     <a
-                      href={`https://polygonscan.com/tx/${tx.tx_hash}`}
+                      href={`https://basescan.org/tx/${tx.tx_hash}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-red-glow hover:text-white font-mono truncate max-w-[200px]"

@@ -17,7 +17,7 @@ interface WorkflowInput {
   amount: number;
   riskProfile: 'low' | 'medium' | 'high';
   action: 'create' | 'compound' | 'rebalance' | 'unstake';
-  chains?: ('mumbai' | 'sepolia' | 'base_sepolia')[];
+  chains?: ('base')[];
 }
 
 interface WorkflowOutput {
@@ -47,7 +47,7 @@ export async function runYieldOptimizationWorkflow(
 ): Promise<WorkflowOutput> {
   const sessionId = `workflow-${input.positionId}-${Date.now()}`;
   const steps: any = {};
-  const chains = input.chains || ['mumbai', 'sepolia'];
+  const chains = input.chains || ['base'];
 
   try {
     logger.info('🚀 Starting yield optimization workflow', {
@@ -296,7 +296,7 @@ export async function runCompoundWorkflow(
     amount: 0, // No new deposit
     riskProfile: 'medium', // Default
     action: 'compound',
-    chains: ['mumbai']
+    chains: ['base']
   });
 }
 
@@ -317,7 +317,7 @@ export async function runRebalanceWorkflow(
     amount: 0,
     riskProfile,
     action: 'rebalance',
-    chains: ['mumbai', 'sepolia']
+    chains: ['base']
   });
 }
 

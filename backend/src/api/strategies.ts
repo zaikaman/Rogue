@@ -40,23 +40,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
-    res.json({
-      success: true,
-      data: strategies.map(strategy => ({
-        id: strategy.id,
-        name: strategy.name,
-        description: strategy.description,
-        riskTier: strategy.risk_tier,
-        expectedApy: strategy.expected_apy,
-        protocolAllocations: strategy.protocol_allocations,
-        leverageRatio: strategy.leverage_ratio,
-        minAmount: strategy.min_amount,
-        maxAmount: strategy.max_amount,
-        isActive: strategy.is_active,
-        createdAt: strategy.created_at,
-        updatedAt: strategy.updated_at
-      }))
-    });
+    res.json(strategies || []);
   } catch (error) {
     return next(error);
   }
@@ -85,24 +69,7 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
-    res.json({
-      success: true,
-      data: {
-        id: strategy.id,
-        name: strategy.name,
-        description: strategy.description,
-        riskTier: strategy.risk_tier,
-        expectedApy: strategy.expected_apy,
-        protocolAllocations: strategy.protocol_allocations,
-        leverageRatio: strategy.leverage_ratio,
-        minAmount: strategy.min_amount,
-        maxAmount: strategy.max_amount,
-        isActive: strategy.is_active,
-        metadata: strategy.metadata,
-        createdAt: strategy.created_at,
-        updatedAt: strategy.updated_at
-      }
-    });
+    res.json(strategy);
   } catch (error) {
     return next(error);
   }

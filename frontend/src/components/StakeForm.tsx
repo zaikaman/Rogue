@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { api } from '../services/api'
+import { CONTRACTS, approveToken, stakeTokens, getAllowance, getTokenBalance } from '../services/contracts'
+import { parseUnits, formatUnits } from 'ethers'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ApproximatelyEqualIcon } from '@hugeicons/core-free-icons'
+import { useAccount, useSwitchChain } from 'wagmi'
 
 interface StakeFormProps {
   riskProfile: 'low' | 'medium' | 'high'
@@ -14,6 +17,30 @@ export default function StakeForm({ riskProfile, walletAddress }: StakeFormProps
   const [isStaking, setIsStaking] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [balance, setBalance] = useState('0')
+  const { chainId } = useAccount()
+  const { switchChain } = useSwitchChain()
+  
+  const BASE_MAINNET_CHAIN_ID = 8453
+  const isCorrectNetwork = chainId === BASE_MAINNET_CHAIN_ID
+
+  // Fetch USDC balance
+  useEffect(() => {
+    if (walletAddress) {
+      getTokenBalance(CONTRACTS.USDC, walletAddress)
+        .then(bal => setBalance(formatUnits(bal, 6)))
+        .catch(() => setBalance('0'))
+    }
+  }, [walletAddress])
+
+  const handleSwitchNetwork = async () => {
+    try {
+      await switchChain({ chainId: BASE_MAINNET_CHAIN_ID })
+    } catch (err) {
+      console.error('Failed to switch network:', err)
+      setError('Failed to switch network. Please switch manually to Base Mainnet.')
+    }
+  }
 
   const handleStake = async () => {
     if (!walletAddress) {
@@ -31,16 +58,40 @@ export default function StakeForm({ riskProfile, walletAddress }: StakeFormProps
     setSuccess(null)
 
     try {
-      // Create position via backend API
+      // Convert amount to wei (USDC has 6 decimals)
+      const amountWei = parseUnits(amount, 6)
+      
+      // Step 1: Check allowance
+      setSuccess('Checking token allowance...')
+      const allowance = await getAllowance(
+        CONTRACTS.USDC,
+        walletAddress,
+        CONTRACTS.STAKING_PROXY
+      )
+
+      // Step 2: Approve if needed
+      if (BigInt(allowance) < amountWei) {
+        setSuccess('Approving USDC... Check your wallet')
+        await approveToken(CONTRACTS.USDC, CONTRACTS.STAKING_PROXY, amountWei.toString())
+        setSuccess('Approval confirmed!')
+      }
+
+      // Step 3: Execute stake transaction
+      setSuccess('Staking tokens... Check your wallet')
+      const receipt = await stakeTokens(CONTRACTS.USDC, amountWei.toString(), riskProfile)
+      
+      // Step 4: Create position in backend
+      setSuccess('Recording position...')
       const result = await api.createPosition({
         wallet_address: walletAddress,
         token: token,
         amount: amount,
-        risk_profile: riskProfile
+        risk_profile: riskProfile,
+        tx_hash: receipt.hash
       })
 
       if (result) {
-        setSuccess(`Position created! ID: ${result.id}`)
+        setSuccess(`🎉 Position created! Redirecting...`)
         setAmount('')
         
         // Redirect to dashboard after 2 seconds
@@ -48,10 +99,17 @@ export default function StakeForm({ riskProfile, walletAddress }: StakeFormProps
           window.location.href = '/app'
         }, 2000)
       } else {
-        setError('Failed to create position')
+        setError('Failed to record position in database')
       }
     } catch (err: any) {
-      setError(err.message || 'Transaction failed')
+      console.error('Stake error:', err)
+      if (err.code === 'ACTION_REJECTED') {
+        setError('Transaction rejected by user')
+      } else if (err.message?.includes('insufficient funds')) {
+        setError('Insufficient funds for transaction')
+      } else {
+        setError(err.message || 'Transaction failed')
+      }
     } finally {
       setIsStaking(false)
     }
@@ -108,9 +166,9 @@ export default function StakeForm({ riskProfile, walletAddress }: StakeFormProps
         
         {/* Balance */}
         <div className="mt-2 flex justify-between text-sm">
-          <span className="text-gray-500 font-mono">Balance: 10,000 {token}</span>
+          <span className="text-gray-500 font-mono">Balance: {parseFloat(balance).toFixed(2)} {token}</span>
           <span className="text-gray-500 font-mono flex items-center gap-1">
-            <HugeiconsIcon icon={ApproximatelyEqualIcon} size={14} /> $10,000 USD
+            <HugeiconsIcon icon={ApproximatelyEqualIcon} size={14} /> ${parseFloat(balance).toFixed(2)} USD
           </span>
         </div>
       </div>
@@ -145,27 +203,38 @@ export default function StakeForm({ riskProfile, walletAddress }: StakeFormProps
       </div>
 
       {/* Stake Button */}
-      <button
-        onClick={handleStake}
-        disabled={!amount || isStaking}
-        className={`
-          w-full py-4 rounded-sm font-bold text-lg transition-all duration-300
-          ${
-            !amount || isStaking
-              ? 'bg-noir-gray/50 text-gray-600 cursor-not-allowed'
-              : 'bg-gradient-red text-noir-black hover:glow-red-intense glitch-on-hover'
-          }
-        `}
-      >
-        {isStaking ? (
-          <span className="flex items-center justify-center space-x-2">
-            <div className="w-5 h-5 border-2 border-noir-black border-t-transparent rounded-full animate-spin" />
-            <span>EXECUTING...</span>
-          </span>
-        ) : (
-          'STAKE NOW'
-        )}
-      </button>
+      {!isCorrectNetwork ? (
+        <button
+          onClick={handleSwitchNetwork}
+          className="w-full py-4 rounded-sm font-bold text-lg transition-all duration-300 bg-warning/80 text-noir-black hover:bg-warning"
+        >
+          SWITCH TO BASE MAINNET
+        </button>
+      ) : (
+        <button
+          onClick={handleStake}
+          disabled={!amount || isStaking || parseFloat(amount) > parseFloat(balance)}
+          className={`
+            w-full py-4 rounded-sm font-bold text-lg transition-all duration-300
+            ${
+              !amount || isStaking || parseFloat(amount) > parseFloat(balance)
+                ? 'bg-noir-gray/50 text-gray-600 cursor-not-allowed'
+                : 'bg-gradient-red text-noir-black hover:glow-red-intense glitch-on-hover'
+            }
+          `}
+        >
+          {isStaking ? (
+            <span className="flex items-center justify-center space-x-2">
+              <div className="w-5 h-5 border-2 border-noir-black border-t-transparent rounded-full animate-spin" />
+              <span>EXECUTING...</span>
+            </span>
+          ) : parseFloat(amount) > parseFloat(balance) ? (
+            'INSUFFICIENT BALANCE'
+          ) : (
+            'STAKE NOW'
+          )}
+        </button>
+      )}
 
       {/* Info */}
       <p className="mt-4 text-xs text-gray-500 text-center font-mono">

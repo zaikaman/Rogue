@@ -12,23 +12,29 @@ const ERC20_ABI = [
 ]
 
 /**
- * StakingProxy contract ABI (placeholder - will be updated when contract is deployed)
+ * StakingProxy contract ABI
  */
 const STAKING_PROXY_ABI = [
-  'function stake(address token, uint256 amount) returns (bool)',
-  'function unstake(uint256 positionId) returns (bool)',
-  'function getPosition(uint256 positionId) view returns (tuple(address user, address token, uint256 amount, uint256 timestamp))',
-  'function getUserPositions(address user) view returns (uint256[])',
+  'function stake(address token, uint256 amount, uint8 riskProfile) returns (bytes32)',
+  'function unstake(bytes32 positionId) returns (uint256)',
+  'function getPosition(bytes32 positionId) view returns (address user, address token, uint256 amount, uint256 depositedAt, uint8 riskProfile, bool active)',
+  'function getUserPositions(address user) view returns (bytes32[])',
+  'event Staked(bytes32 indexed positionId, address indexed user, address indexed token, uint256 amount, uint8 riskProfile)',
 ]
 
 /**
- * Contract addresses (to be updated after deployment)
+ * Contract addresses (Base Mainnet)
+ * NOTE: STAKING_PROXY and YIELD_HARVESTER need to be deployed to Base Mainnet first
+ * Run: cd contracts && npx hardhat run scripts/deploy.ts --network base
  */
 export const CONTRACTS = {
-  STAKING_PROXY: '0x0000000000000000000000000000000000000000',
-  YIELD_HARVESTER: '0x0000000000000000000000000000000000000000',
-  USDC: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-  WMATIC: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+  // TODO: Update these after deploying to Base Mainnet
+  STAKING_PROXY: import.meta.env.VITE_STAKING_PROXY_ADDRESS || '0xBe038f9Fa03C127e5E565a77b5b6DD1507B223a1',
+  YIELD_HARVESTER: import.meta.env.VITE_YIELD_HARVESTER_ADDRESS || '0xa26A882e63B598B7f4B39C56fB014A7F4398FbFD',
+  // Base Mainnet token addresses
+  USDC: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',  // Base Mainnet USDC
+  WETH: '0x4200000000000000000000000000000000000006',  // Base Mainnet WETH
+  CBETH: '0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22', // Base Mainnet cbETH
 }
 
 /**
@@ -81,16 +87,21 @@ export async function getAllowance(
 /**
  * Stake tokens
  */
-export async function stakeTokens(tokenAddress: string, amount: string) {
+export async function stakeTokens(
+  tokenAddress: string, 
+  amount: string,
+  riskProfile: 'low' | 'medium' | 'high'
+) {
   const stakingContract = await getStakingContract()
-  const tx = await stakingContract.stake(tokenAddress, amount)
+  const riskMap = { low: 0, medium: 1, high: 2 }
+  const tx = await stakingContract.stake(tokenAddress, amount, riskMap[riskProfile])
   return await tx.wait()
 }
 
 /**
  * Unstake tokens
  */
-export async function unstakeTokens(positionId: number) {
+export async function unstakeTokens(positionId: string) {
   const stakingContract = await getStakingContract()
   const tx = await stakingContract.unstake(positionId)
   return await tx.wait()

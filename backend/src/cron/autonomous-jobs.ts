@@ -21,7 +21,7 @@ export function scheduleHourlyScan() {
       logger.info('🕐 Starting hourly market scan');
 
       const sessionId = `hourly-${Date.now()}`;
-      const research = await runEnhancedResearcher(sessionId, ['mumbai', 'sepolia']);
+      const research = await runEnhancedResearcher(sessionId, ['base']);
 
       logger.info('✅ Hourly scan completed', {
         opportunities: research.topOpportunities.length,
@@ -176,7 +176,7 @@ export function scheduleQuarterlyRebalance() {
           // Get latest market data
           const research = await runEnhancedResearcher(
             `rebalance-${position.id}`,
-            ['mumbai', 'sepolia']
+            ['base']
           );
 
           // Check if rebalance needed (simplified)

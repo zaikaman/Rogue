@@ -17,6 +17,8 @@ export interface CreatePositionPayload {
   token: 'USDC'
   amount: string
   risk_profile: 'low' | 'medium' | 'high'
+  tx_hash?: string
+  chain?: 'mumbai' | 'sepolia' | 'base_sepolia'
 }
 
 export interface Position {
@@ -42,7 +44,7 @@ async function getPositions(walletAddress: string): Promise<Position[]> {
 }
 
 async function getPosition(id: string): Promise<Position> {
-  const { data } = await apiClient.get(`/api/positions/id/${id}`)
+  const { data } = await apiClient.get(`/api/positions/detail/${id}`)
   return data
 }
 
@@ -193,7 +195,7 @@ async function getMultichainOpportunities(
   const { data } = await apiClient.get('/api/multichain/opportunities', {
     params: { chain, minApy }
   })
-  return data
+  return data.data?.opportunities || []
 }
 
 async function getBridgeQuote(

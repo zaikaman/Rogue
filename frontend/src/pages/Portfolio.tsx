@@ -29,9 +29,7 @@ interface TokenHolding {
 }
 
 const CHAIN_COLORS = {
-  amoy: 'text-purple-400',
-  sepolia: 'text-blue-400',
-  base_sepolia: 'text-indigo-400'
+  base: 'text-blue-500'
 }
 
 export default function Portfolio() {

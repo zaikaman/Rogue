@@ -22,9 +22,7 @@ interface YieldOpportunity {
 }
 
 const CHAIN_INFO = {
-  amoy: { name: 'Polygon Amoy', icon: PolygonIcon },
-  sepolia: { name: 'Ethereum Sepolia', icon: EthereumIcon },
-  base_sepolia: { name: 'Base Sepolia', icon: CoinbaseIcon }
+  base: { name: 'Base Mainnet', icon: CoinbaseIcon }
 }
 
 export default function Multichain() {

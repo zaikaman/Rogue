@@ -8,6 +8,13 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
+ * @notice Interface for StakingProxy fee management
+ */
+interface IStakingProxy {
+    function deductFee(address user, uint256 amount, bytes32 positionId) external;
+}
+
+/**
  * @title YieldHarvester
  * @notice Executor contract for Rogue Yield Optimizer
  * @dev Handles deposits, compounds, and hedges across DeFi protocols
@@ -131,18 +138,27 @@ contract YieldHarvester is Ownable, ReentrancyGuard, Pausable {
      * @param protocol Protocol name
      * @param token Token address
      * @param amount Amount to deposit
+     * @param user User address (to deduct fee from)
+     * @param estimatedGasCost Estimated gas cost in wei
      */
     function depositToProtocol(
         bytes32 positionId,
         string memory protocol,
         address token,
-        uint256 amount
+        uint256 amount,
+        address user,
+        uint256 estimatedGasCost
     ) external onlyAuthorizedExecutor whenNotPaused nonReentrant {
         if (amount == 0) {
             revert InvalidAmount();
         }
         if (protocols[protocol] == address(0)) {
             revert ProtocolNotFound();
+        }
+
+        // Deduct gas fee from user's fee balance
+        if (estimatedGasCost > 0) {
+            IStakingProxy(stakingProxy).deductFee(user, estimatedGasCost, positionId);
         }
 
         // Transfer tokens from StakingProxy
@@ -170,17 +186,26 @@ contract YieldHarvester is Ownable, ReentrancyGuard, Pausable {
      * @param positionId Position identifier
      * @param protocol Protocol name
      * @param yieldAmount Yield amount to compound
+     * @param user User address (to deduct fee from)
+     * @param estimatedGasCost Estimated gas cost in wei
      */
     function compoundYield(
         bytes32 positionId,
         string memory protocol,
-        uint256 yieldAmount
+        uint256 yieldAmount,
+        address user,
+        uint256 estimatedGasCost
     ) external onlyAuthorizedExecutor whenNotPaused nonReentrant {
         if (yieldAmount == 0) {
             revert InvalidAmount();
         }
         if (protocols[protocol] == address(0)) {
             revert ProtocolNotFound();
+        }
+
+        // Deduct gas fee from user's fee balance
+        if (estimatedGasCost > 0) {
+            IStakingProxy(stakingProxy).deductFee(user, estimatedGasCost, positionId);
         }
 
         // Record execution

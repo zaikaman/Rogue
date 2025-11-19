@@ -166,7 +166,7 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed"
             >
-              Autonomous, tokenized AI portfolio manager on IQAI ATP. Hands-off, multi-agent management across Polygon Mumbai, Sepolia and Base. Buy and stake <span className="font-mono text-teal-glow">$RGE</span> to delegate — no extra signatures needed.
+              Autonomous, tokenized AI portfolio manager on IQAI ATP. Hands-off, multi-agent management on <span className="font-mono text-teal-glow">Base Mainnet</span>. Buy and stake <span className="font-mono text-teal-glow">$RGE</span> to delegate — no extra signatures needed.
             </motion.p>
 
             <motion.div 
@@ -221,7 +221,7 @@ export default function Home() {
             <div className="flex gap-16 py-2 items-center animate-marquee whitespace-nowrap">
               {[...Array(2)].map((_, i) => (
                 <div key={i} className="flex gap-16 shrink-0 items-center min-w-full justify-around">
-                  <span className="text-xl font-bold text-gray-600 hover:text-white transition duration-300">POLYGON</span>
+                  <span className="text-xl font-bold text-gray-600 hover:text-white transition duration-300">BASE</span>
                   <span className="text-xl font-bold text-gray-600 hover:text-white transition duration-300">AAVE</span>
                   <span className="text-xl font-bold text-gray-600 hover:text-white transition duration-300">UNISWAP</span>
                   <span className="text-xl font-bold text-gray-600 hover:text-white transition duration-300">CHAINLINK</span>
@@ -375,7 +375,7 @@ export default function Home() {
 
           <div className="space-y-6">
             {[
-              { step: '01', title: 'Connect Wallet', desc: 'Connect your Polygon wallet (MetaMask, etc.) in seconds.' },
+              { step: '01', title: 'Connect Wallet', desc: 'Connect your Base wallet (MetaMask, Coinbase Wallet, etc.) in seconds.' },
               { step: '02', title: 'Select Risk Profile', desc: 'Choose Low, Medium, or High risk. Rogue adjusts its strategy accordingly.' },
               { step: '03', title: 'Stake & Delegate', desc: (
                 <span>
@@ -421,12 +421,12 @@ export default function Home() {
           <div className="relative mask-linear-fade">
             <div className="flex gap-6 animate-marquee hover:[animation-play-state:paused]">
               {[
-                { name: "Alex K.", handle: "@alexk_defi", text: "Rogue's high-risk strategy on Polygon is insane. 18% APY on stables while I sleep? Yes please." },
+                { name: "Alex K.", handle: "@alexk_defi", text: "Rogue's high-risk strategy on Base is insane. 18% APY on stables while I sleep? Yes please." },
                 { name: "Sarah M.", handle: "@sarah_yields", text: "I love the 'set it and forget it' vibe. The AI actually moves my funds when rates drop. Game changer." },
                 { name: "David T.", handle: "@dave_crypto", text: "Finally a yield optimizer that doesn't require me to check it every hour. The risk profiles are spot on." },
-                { name: "Elena R.", handle: "@elena_eth", text: "The USDC support is great — seamless stablecoin yields on Polygon." },
+                { name: "Elena R.", handle: "@elena_eth", text: "The USDC support is great — seamless stablecoin yields on Base." },
                 { name: "Marcus L.", handle: "@marcus_l", text: "Cleanest UI in DeFi. And the fact that it's non-custodial gives me peace of mind." },
-                { name: "Alex K.", handle: "@alexk_defi", text: "Rogue's high-risk strategy on Polygon is insane. 18% APY on stables while I sleep? Yes please." },
+                { name: "Alex K.", handle: "@alexk_defi", text: "Rogue's high-risk strategy on Base is insane. 18% APY on stables while I sleep? Yes please." },
                 { name: "Sarah M.", handle: "@sarah_yields", text: "I love the 'set it and forget it' vibe. The AI actually moves my funds when rates drop. Game changer." },
                 { name: "David T.", handle: "@dave_crypto", text: "Finally a yield optimizer that doesn't require me to check it every hour. The risk profiles are spot on." },
               ].map((testimonial, i) => (
@@ -460,7 +460,7 @@ export default function Home() {
                 Ready to <span className="text-teal-glow">Go Rogue</span>?
               </h2>
               <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
-                Stake <span className="font-mono text-teal-glow">$RGE</span> and delegate — Rogue manages and reports performance across testnets.
+                Stake <span className="font-mono text-teal-glow">$RGE</span> and delegate — Rogue manages and reports performance on Base Mainnet.
               </p>
               <Link to="/app" className="inline-flex items-center justify-center gap-2 bg-teal-glow hover:bg-teal-dark text-noir-black px-10 py-5 rounded-lg text-lg font-bold transition-all duration-300 shadow-[0_0_30px_rgba(0,212,255,0.4)] hover:scale-105">
                 Launch App

@@ -33,7 +33,26 @@ contract StakingProxy is Ownable, ReentrancyGuard {
     mapping(bytes32 => Position) public positions;
     mapping(address => bytes32[]) public userPositions;
 
+    // Fee balance tracking (ETH deposits to cover gas costs)
+    mapping(address => uint256) public feeBalances;
+
     // Events
+    event FeeDeposited(
+        address indexed user,
+        uint256 amount
+    );
+
+    event FeeWithdrawn(
+        address indexed user,
+        uint256 amount
+    );
+
+    event FeeDeducted(
+        address indexed user,
+        uint256 amount,
+        bytes32 indexed positionId
+    );
+
     event Staked(
         bytes32 indexed positionId,
         address indexed user,
@@ -65,6 +84,7 @@ contract StakingProxy is Ownable, ReentrancyGuard {
     error PositionNotActive();
     error Unauthorized();
     error TransferFailed();
+    error InsufficientFeeBalance();
 
     /**
      * @notice Initialize the StakingProxy contract
@@ -138,9 +158,10 @@ contract StakingProxy is Ownable, ReentrancyGuard {
     /**
      * @notice Unstake tokens and withdraw funds
      * @param positionId Position identifier
-     * @return amount Amount withdrawn (after fees)
+     * @param unstakeFee Estimated gas cost in wei (deducted from user's ETH fee balance)
+     * @return amount Amount withdrawn (full amount, no USDC fee)
      */
-    function unstake(bytes32 positionId) external nonReentrant returns (uint256 amount) {
+    function unstake(bytes32 positionId, uint256 unstakeFee) external nonReentrant returns (uint256 amount) {
         Position storage position = positions[positionId];
 
         // Validate position
@@ -154,22 +175,32 @@ contract StakingProxy is Ownable, ReentrancyGuard {
             revert PositionNotActive();
         }
 
-        // Calculate withdrawal amount (0.5% fee)
-        uint256 fee = (position.amount * 50) / 10000; // 0.5%
-        amount = position.amount - fee;
+        // Deduct gas fee from user's ETH balance (not from USDC)
+        if (unstakeFee > 0) {
+            if (feeBalances[msg.sender] < unstakeFee) {
+                revert InsufficientFeeBalance();
+            }
+            feeBalances[msg.sender] -= unstakeFee;
+            
+            // Transfer fee to owner (executor wallet)
+            (bool success, ) = payable(owner()).call{value: unstakeFee}("");
+            if (!success) {
+                revert TransferFailed();
+            }
+            
+            emit FeeDeducted(msg.sender, unstakeFee, positionId);
+        }
+
+        // Return full USDC amount (no USDC fee deduction)
+        amount = position.amount;
 
         // Mark position as inactive
         position.active = false;
 
-        // Transfer tokens back to user
+        // Transfer full tokens back to user
         IERC20(position.token).safeTransfer(position.user, amount);
 
-        // Send fee to owner (for operational costs)
-        if (fee > 0) {
-            IERC20(position.token).safeTransfer(owner(), fee);
-        }
-
-        emit Unstaked(positionId, position.user, amount, fee);
+        emit Unstaked(positionId, position.user, amount, unstakeFee);
 
         return amount;
     }
@@ -214,6 +245,80 @@ contract StakingProxy is Ownable, ReentrancyGuard {
      */
     function getUserPositions(address user) external view returns (bytes32[] memory) {
         return userPositions[user];
+    }
+
+    /**
+     * @notice Deposit ETH to cover gas fees for agent transactions
+     * @dev Users deposit ETH which will be deducted when agents execute transactions
+     */
+    function depositFeeBalance() external payable nonReentrant {
+        if (msg.value == 0) {
+            revert InvalidAmount();
+        }
+
+        feeBalances[msg.sender] += msg.value;
+
+        emit FeeDeposited(msg.sender, msg.value);
+    }
+
+    /**
+     * @notice Withdraw unused fee balance
+     * @param amount Amount of ETH to withdraw
+     */
+    function withdrawFeeBalance(uint256 amount) external nonReentrant {
+        if (amount == 0) {
+            revert InvalidAmount();
+        }
+        if (feeBalances[msg.sender] < amount) {
+            revert InsufficientFeeBalance();
+        }
+
+        feeBalances[msg.sender] -= amount;
+
+        (bool success, ) = msg.sender.call{value: amount}("");
+        if (!success) {
+            revert TransferFailed();
+        }
+
+        emit FeeWithdrawn(msg.sender, amount);
+    }
+
+    /**
+     * @notice Deduct fee from user's balance (called by YieldHarvester)
+     * @param user User address
+     * @param amount Fee amount to deduct
+     * @param positionId Associated position ID
+     */
+    function deductFee(
+        address user,
+        uint256 amount,
+        bytes32 positionId
+    ) external nonReentrant {
+        if (msg.sender != yieldHarvester) {
+            revert Unauthorized();
+        }
+        if (feeBalances[user] < amount) {
+            revert InsufficientFeeBalance();
+        }
+
+        feeBalances[user] -= amount;
+
+        // Transfer fee to YieldHarvester owner (executor wallet)
+        (bool success, ) = payable(msg.sender).call{value: amount}("");
+        if (!success) {
+            revert TransferFailed();
+        }
+
+        emit FeeDeducted(user, amount, positionId);
+    }
+
+    /**
+     * @notice Get user's current fee balance
+     * @param user User address
+     * @return Fee balance in wei
+     */
+    function getFeeBalance(address user) external view returns (uint256) {
+        return feeBalances[user];
     }
 
     /**

@@ -15,8 +15,8 @@ export const config = {
   SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || '',
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
   
-  // Alchemy RPC
-  POLYGON_RPC_URL: process.env.POLYGON_RPC_URL || '',
+  // Base Mainnet RPC
+  BASE_RPC_URL: process.env.BASE_RPC_URL || '',
   
   // OpenAI (REQUIRED for ADK-TS agents)
   OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
@@ -32,25 +32,24 @@ export const config = {
   
   // External APIs
   FRAX_API_URL: process.env.FRAX_API_URL || 'https://api.frax.finance',
-  AAVE_SUBGRAPH_URL: process.env.AAVE_SUBGRAPH_URL || 'https://api.thegraph.com/subgraphs/name/aave/protocol-v3-polygon-amoy',
+  AAVE_SUBGRAPH_URL: process.env.AAVE_SUBGRAPH_URL || 'https://api.thegraph.com/subgraphs/name/aave/protocol-v3-base',
 };
 
 /**
- * Polygon Amoy Testnet Token Addresses (ChainID: 80002)
- * Get testnet tokens from https://faucets.chain.link/polygon-amoy
+ * Base Mainnet Token Addresses (ChainID: 8453)
  */
 export const TOKEN_ADDRESSES = {
-  USDC: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582', // Amoy testnet USDC
-  WMATIC: '0x360ad4f9a9A8EFe9A8DCB5f461c4Cc1047E1Dcf9', // Amoy testnet WMATIC
+  USDC: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', // Base Mainnet USDC
+  WETH: '0x4200000000000000000000000000000000000006', // Base Mainnet WETH
+  CBETH: '0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22', // Base Mainnet cbETH
 };
 
 /**
- * Chainlink Oracle Addresses (Polygon Amoy Testnet - ChainID: 80002)
- * Note: POL/USD is the primary feed on Amoy (MATIC rebranded to POL)
+ * Chainlink Oracle Addresses (Base Mainnet - ChainID: 8453)
  */
 export const CHAINLINK_ORACLES = {
-  USDC_USD: process.env.CHAINLINK_USDC_USD || '0x001382149eBa3441043c1c66972b4772963f5D43',
-  MATIC_USD: process.env.CHAINLINK_MATIC_USD || '0x001382149eBa3441043c1c66972b4772963f5D43',
+  ETH_USD: process.env.CHAINLINK_ETH_USD || '0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70',
+  USDC_USD: process.env.CHAINLINK_USDC_USD || '0x7e860098F58bBFC8648a4311b374B1D669a2bc6B',
 };
 
 /**
@@ -81,7 +80,7 @@ export function validateConfig() {
   const required = [
     'SUPABASE_URL',
     'SUPABASE_SERVICE_ROLE_KEY',
-    'POLYGON_RPC_URL',
+    'BASE_RPC_URL',
     'OPENAI_API_KEY',
   ];
   

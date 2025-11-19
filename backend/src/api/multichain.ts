@@ -4,73 +4,73 @@ import logger from '../utils/logger';
 
 const router = Router();
 
-// Define multichain yield opportunities (would be fetched from protocols in production)
+// Define Base Mainnet yield opportunities (would be fetched from protocols in production)
 const YIELD_OPPORTUNITIES = [
-  {
-    id: 'aave-mumbai-usdc',
-    protocol: 'Aave V3',
-    chain: 'mumbai',
-    token: 'USDC',
-    apy: 4.25,
-    tvl: 1250000,
-    risk: 'low',
-    minDeposit: '100',
-    features: ['Auto-compound', 'Flash Loans', 'Isolated Lending']
-  },
-  {
-    id: 'compound-sepolia-eth',
-    protocol: 'Compound V3',
-    chain: 'sepolia',
-    token: 'ETH',
-    apy: 3.8,
-    tvl: 2100000,
-    risk: 'low',
-    minDeposit: '0.1',
-    features: ['Governance Rights', 'Collateral Efficiency']
-  },
-  {
-    id: 'lido-sepolia-eth',
-    protocol: 'Lido',
-    chain: 'sepolia',
-    token: 'ETH',
-    apy: 5.2,
-    tvl: 8500000,
-    risk: 'low',
-    minDeposit: '0.01',
-    features: ['Liquid Staking', 'Daily Rewards', 'No Lock Period']
-  },
   {
     id: 'aave-base-usdc',
     protocol: 'Aave V3',
-    chain: 'base_sepolia',
+    chain: 'base',
     token: 'USDC',
-    apy: 6.5,
-    tvl: 450000,
-    risk: 'medium',
-    minDeposit: '50',
-    features: ['High APY', 'L2 Speed', 'Low Gas']
-  },
-  {
-    id: 'uniswap-mumbai-matic-usdc',
-    protocol: 'Uniswap V3',
-    chain: 'mumbai',
-    token: 'MATIC-USDC LP',
-    apy: 12.3,
-    tvl: 680000,
-    risk: 'medium',
-    minDeposit: '200',
-    features: ['Trading Fees', 'Concentrated Liquidity', 'IL Protection']
-  },
-  {
-    id: 'curve-base-dai-usdc',
-    protocol: 'Curve',
-    chain: 'base_sepolia',
-    token: 'DAI-USDC LP',
-    apy: 8.7,
-    tvl: 920000,
+    apy: 5.8,
+    tvl: 145000000,
     risk: 'low',
-    minDeposit: '500',
-    features: ['Stable Pairs', 'Low IL', 'CRV Rewards']
+    minDeposit: '10',
+    features: ['Auto-compound', 'Flash Loans', 'Isolated Lending', 'Low Gas']
+  },
+  {
+    id: 'aave-base-eth',
+    protocol: 'Aave V3',
+    chain: 'base',
+    token: 'ETH',
+    apy: 3.2,
+    tvl: 289000000,
+    risk: 'low',
+    minDeposit: '0.01',
+    features: ['Native ETH Yield', 'Liquid', 'Low Gas', 'Collateral Efficiency']
+  },
+  {
+    id: 'aave-base-cbeth',
+    protocol: 'Aave V3',
+    chain: 'base',
+    token: 'cbETH',
+    apy: 4.1,
+    tvl: 78000000,
+    risk: 'low',
+    minDeposit: '0.01',
+    features: ['Staking Yield', 'Coinbase Backed', 'Liquid', 'Auto-compound']
+  },
+  {
+    id: 'uniswap-base-eth-usdc',
+    protocol: 'Uniswap V3',
+    chain: 'base',
+    token: 'ETH-USDC LP',
+    apy: 8.5,
+    tvl: 92000000,
+    risk: 'medium',
+    minDeposit: '100',
+    features: ['Trading Fees', 'Concentrated Liquidity', 'High Volume', 'Low Gas']
+  },
+  {
+    id: 'aerodrome-base-usdc-dai',
+    protocol: 'Aerodrome',
+    chain: 'base',
+    token: 'USDC-DAI LP',
+    apy: 12.3,
+    tvl: 45000000,
+    risk: 'low',
+    minDeposit: '50',
+    features: ['Stable Pairs', 'Low IL', 'AERO Rewards', 've(3,3) Model']
+  },
+  {
+    id: 'moonwell-base-usdc',
+    protocol: 'Moonwell',
+    chain: 'base',
+    token: 'USDC',
+    apy: 6.2,
+    tvl: 38000000,
+    risk: 'medium',
+    minDeposit: '25',
+    features: ['Base Native', 'Governance', 'WELL Rewards', 'Community Owned']
   }
 ];
 
@@ -150,7 +150,7 @@ router.get('/opportunities', async (req: Request, res: Response, next: NextFunct
       data: {
         opportunities: enhancedOpportunities,
         totalCount: enhancedOpportunities.length,
-        chains: ['mumbai', 'sepolia', 'base_sepolia'],
+        chains: ['base'],
         timestamp: new Date().toISOString()
       }
     });
@@ -206,8 +206,8 @@ router.get('/optimal-chain', async (req: Request, res: Response, next: NextFunct
           }
         }
 
-        // Estimate gas cost (simplified)
-        const gasCost = opp.chain === 'base_sepolia' ? 0.5 : 2; // USD
+        // Estimate gas cost (simplified - Base has very low gas)
+        const gasCost = 0.25; // USD - Base is much cheaper than L1
 
         // Calculate net APY over 1 year
         const grossYield = (parseFloat(amount as string) * opp.apy) / 100;

@@ -2,11 +2,11 @@ import axios from 'axios';
 import logger from '../utils/logger';
 
 /**
- * Aave v3 Polygon Subgraph client
+ * Aave v3 Base Mainnet Subgraph client
  * Official subgraph for querying Aave yield rates, markets, and liquidity
  */
 
-const AAVE_V3_POLYGON_SUBGRAPH = 'https://gateway.thegraph.com/api/subgraphs/id/6yuf1C49aWEscgk5n9D1DekeG1BCk5Z9imJYJT3sVmAT';
+const AAVE_V3_BASE_SUBGRAPH = 'https://api.thegraph.com/subgraphs/name/aave/protocol-v3-base';
 
 // Rate conversion constants
 const RAY = 10 ** 27;
@@ -51,7 +51,7 @@ function rayAprToApy(liquidityRate: string): number {
 async function queryAaveSubgraph(query: string, variables?: Record<string, any>): Promise<any> {
   try {
     const response = await axios.post(
-      AAVE_V3_POLYGON_SUBGRAPH,
+      AAVE_V3_BASE_SUBGRAPH,
       {
         query,
         variables

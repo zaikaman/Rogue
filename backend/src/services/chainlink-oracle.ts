@@ -3,12 +3,11 @@ import { getProvider } from '../utils/rpc';
 import logger from '../utils/logger';
 
 /**
- * Chainlink Price Feed Oracle Reader for Polygon
+ * Chainlink Price Feed Oracle Reader for Base Mainnet
  * 
- * Per research.md:
- * - USDC/USD: 0.25% deviation, ~27s heartbeat
- * - MATIC/USD: 0.5% deviation, ~30s heartbeat
- * - Polygon has NO L2 sequencer uptime feed (not an optimistic rollup)
+ * Base Mainnet price feeds:
+ * - ETH/USD and USDC/USD feeds available
+ * - Base is an L2, but we'll use direct price feeds
  */
 
 // Chainlink AggregatorV3Interface ABI
@@ -55,14 +54,14 @@ const AGGREGATOR_V3_INTERFACE_ABI = [
   }
 ];
 
-// Polygon Mainnet Price Feed Addresses (from research.md)
+// Base Mainnet Price Feed Addresses
 export const CHAINLINK_PRICE_FEEDS = {
-  'USDC/USD': '0xfE4A8cc5b5B2366C1B58Bea3858e81843581b2F7',
-  'MATIC/USD': '0xAB594600376Ec9fD91F8e885dADF0CE036862dE0',
-  'WETH/USD': '0xF9680D99D6C9589e2a93a78A04A279e509205945',
-  'DAI/USD': '0x4746DeC9e833A82EC7C2C1356372CcF2cfcD2F3D',
-  'WBTC/USD': '0xc907E116054Ad103354f2D350FD2514433D57F6f',
-  'AAVE/USD': '0x72484B12719E23115761D5DA1646945632979bB6'
+  'ETH/USD': '0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70',
+  'USDC/USD': '0x7e860098F58bBFC8648a4311b374B1D669a2bc6B',
+  'DAI/USD': '0x591e79239a7d679378eC8c847e5038150364C78F',
+  'USDT/USD': '0xf19d560eB8d2ADf07BD6D13ed03e1D11215721F9',
+  'AAVE/USD': '0x65B5d02E1Fff839b8B67Fa26F8540e5f11454316',
+  'WBTC/USD': '0xCCADC697c55bbB68dc5bCdf8d3CBe83CdD4E071E'
 };
 
 // Heartbeat tolerances per risk profile (from research.md)

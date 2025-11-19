@@ -187,15 +187,13 @@ async function fetchOnChainBalances(walletAddress: string): Promise<any[]> {
   const balances: any[] = [];
 
   const chains = [
-    { name: 'mumbai', rpcUrl: process.env.MUMBAI_RPC_URL || 'https://rpc-mumbai.maticvigil.com' },
-    { name: 'sepolia', rpcUrl: process.env.SEPOLIA_RPC_URL || 'https://rpc.sepolia.org' },
-    { name: 'base_sepolia', rpcUrl: process.env.BASE_SEPOLIA_RPC_URL || 'https://sepolia.base.org' }
+    { name: 'base', rpcUrl: process.env.BASE_RPC_URL || 'https://mainnet.base.org' }
   ];
 
   for (const chain of chains) {
     try {
       const provider = new ethers.JsonRpcProvider(chain.rpcUrl);
-      const tokens = TOKEN_ADDRESSES[chain.name as keyof typeof TOKEN_ADDRESSES];
+      const tokens = TOKEN_ADDRESSES;
 
       for (const [symbol, address] of Object.entries(tokens)) {
         try {

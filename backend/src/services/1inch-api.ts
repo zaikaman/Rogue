@@ -80,7 +80,7 @@ export async function getSwapQuote(
       throw new Error(`1inch API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
 
     const quote: SwapQuote = {
       fromToken: data.srcToken?.address || fromToken,
@@ -119,7 +119,7 @@ export async function getSwapQuote(
  * Build swap transaction
  */
 export async function buildSwapTransaction(
-  chain: 'mumbai' | 'sepolia' | 'base_sepolia',
+  chain: 'base',
   fromToken: string,
   toToken: string,
   amount: string,
@@ -136,9 +136,9 @@ export async function buildSwapTransaction(
 
     const apiKey = process.env.ONEINCH_API_KEY;
     
-    // For testnets without 1inch support, simulate transaction
-    if (!apiKey || chain === 'mumbai' || chain === 'base_sepolia') {
-      logger.warn('Using simulated transaction for testnet', { chain });
+    // For Base Mainnet without 1inch (use alternative DEX aggregator or direct swap)
+    if (!apiKey) {
+      logger.warn('No 1inch API key configured, using simulated transaction');
       
       const simulatedTx: SwapTransaction = {
         from: fromAddress,
@@ -146,14 +146,14 @@ export async function buildSwapTransaction(
         data: '0x' + Buffer.from('simulated_swap_data').toString('hex'),
         value: fromToken === ethers.ZeroAddress ? amount : '0',
         gas: '200000',
-        gasPrice: ethers.parseUnits('30', 'gwei').toString()
+        gasPrice: ethers.parseUnits('0.5', 'gwei').toString() // Base has low gas
       };
       
       return simulatedTx;
     }
 
-    // Map chain to 1inch chainId
-    const chainId = chain === 'sepolia' ? 11155111 : 1;
+    // Map Base Mainnet to 1inch chainId
+    const chainId = 8453; // Base Mainnet
     
     const url = new URL(`https://api.1inch.dev/swap/v6.0/${chainId}/swap`);
     url.searchParams.append('src', fromToken);
@@ -173,7 +173,7 @@ export async function buildSwapTransaction(
       throw new Error(`1inch API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
 
     const tx: SwapTransaction = {
       from: fromAddress,

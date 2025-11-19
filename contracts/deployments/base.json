@@ -1,0 +1,20 @@
+{
+  "network": "Base Mainnet",
+  "networkKey": "base",
+  "chainId": 8453,
+  "stakingProxy": "0x1E24cb5a00EE28E044a07A972245853576822B6d",
+  "yieldHarvester": "0xc597b6484931A42d95658f3aE032487a718a17B9",
+  "tokens": {
+    "usdc": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "dai": "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb",
+    "weth": "0x4200000000000000000000000000000000000006"
+  },
+  "protocols": {
+    "aave": "0xA238Dd80C259a72e81d7e4664a9801593F98d1c5",
+    "moonwell": "0xfBb21d0380beE3312B33c4353c8936a0F13EF26C",
+    "morpho": "0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb",
+    "aerodrome": "0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43"
+  },
+  "deployer": "0xda61fd21C918783B9f28c507D7f9F86E31e31Db8",
+  "timestamp": "2025-11-19T15:14:55.066Z"
+}

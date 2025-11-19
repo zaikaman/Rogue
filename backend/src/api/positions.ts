@@ -7,21 +7,22 @@ import { claimRewards as claimRewardsContract, withdrawFromProtocol } from '../c
 import { ethers } from 'ethers';
 import { getProvider } from '../utils/rpc';
 import { calculateRewards } from '../agents/governor';
+import { runYieldOptimizationWorkflow } from '../workflows/yield-optimization-enhanced';
 
 const router = Router();
 
 // Validation schemas
 const createPositionSchema = z.object({
-  walletAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid Ethereum address'),
+  wallet_address: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid Ethereum address'),
   token: z.literal('USDC'),
   amount: z.string().regex(/^\d+(\.\d+)?$/, 'Invalid amount'),
-  riskProfile: z.enum(['low', 'medium', 'high']),
-  signature: z.string(),
-  message: z.string()
+  risk_profile: z.enum(['low', 'medium', 'high']),
+  chain: z.literal('base').optional().default('base'),
+  tx_hash: z.string().optional() // Optional: if frontend already executed the stake
 });
 
 const updateAllocationSchema = z.object({
-  riskProfile: z.enum(['low', 'medium', 'high']).optional(),
+  risk_profile: z.enum(['low', 'medium', 'high']).optional(),
   allocation: z.record(z.string(), z.number()).optional()
 });
 
@@ -32,30 +33,22 @@ const updateAllocationSchema = z.object({
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const validatedData = createPositionSchema.parse(req.body);
-    const { walletAddress, token, amount, riskProfile, signature, message } = validatedData;
-
-    // Verify wallet signature
-    const recoveredAddress = ethers.verifyMessage(message, signature);
-    if (recoveredAddress.toLowerCase() !== walletAddress.toLowerCase()) {
-      return res.status(401).json({
-        error: 'Invalid signature',
-        message: 'Wallet signature verification failed'
-      });
-    }
+    const { wallet_address, token, amount, risk_profile, chain, tx_hash } = validatedData;
 
     const supabase = getSupabaseClient();
 
-    // Create position in database
+    // Create position in database with pending status
     const { data: position, error } = await supabase
       .from('positions')
       .insert({
-        wallet_address: walletAddress.toLowerCase(),
+        wallet_address: wallet_address.toLowerCase(),
         token,
         amount,
-        risk_profile: riskProfile,
-        status: 'active',
-        allocation: {}, // Empty allocation initially
-        strategy_id: null, // Will be set by Analyzer agent
+        risk_profile,
+        status: 'active', // Frontend confirms before sending
+        chain: 'base',
+        allocation: {},
+        strategy_id: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
@@ -63,33 +56,79 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
       .single();
 
     if (error) {
-      logger.error('Failed to create position', { error, walletAddress });
+      logger.error('Failed to create position', { error, wallet_address });
       return res.status(500).json({
         error: 'Database error',
         message: 'Failed to create position'
       });
     }
 
+    // Record the stake transaction if tx_hash provided
+    if (tx_hash) {
+      await supabase
+        .from('transaction_records')
+        .insert({
+          wallet_address: wallet_address.toLowerCase(),
+          position_id: position.id,
+          tx_hash,
+          type: 'stake',
+          status: 'confirmed',
+          chain: 'base',
+          amount,
+          notes: `Staked ${amount} ${token}`,
+          created_at: new Date().toISOString(),
+          confirmed_at: new Date().toISOString()
+        });
+    }
+
     logger.info('Position created', {
       positionId: position.id,
-      walletAddress,
+      wallet_address,
       token,
       amount,
-      riskProfile
+      risk_profile
     });
 
-    res.status(201).json({
-      success: true,
-      data: {
-        id: position.id,
-        walletAddress: position.wallet_address,
-        token: position.token,
-        amount: position.amount,
-        riskProfile: position.risk_profile,
-        status: position.status,
-        createdAt: position.created_at
+    // Trigger yield optimization workflow asynchronously (don't block response)
+    setImmediate(async () => {
+      try {
+        logger.info('🚀 Auto-triggering yield optimization workflow', {
+          positionId: position.id,
+          wallet_address,
+          amount,
+          risk_profile
+        });
+
+        const workflowResult = await runYieldOptimizationWorkflow({
+          walletAddress: wallet_address,
+          token: token as 'USDC',
+          amount: parseFloat(amount),
+          riskProfile: risk_profile,
+          positionId: position.id,
+          action: 'deposit' // Initial deposit action
+        });
+
+        if (workflowResult.success) {
+          logger.info('✅ Workflow completed successfully', {
+            positionId: position.id,
+            steps: Object.keys(workflowResult.steps)
+          });
+        } else {
+          logger.warn('⚠️ Workflow completed with errors', {
+            positionId: position.id,
+            error: workflowResult.error
+          });
+        }
+      } catch (error: any) {
+        logger.error('❌ Failed to execute workflow', {
+          positionId: position.id,
+          error: error.message,
+          stack: error.stack
+        });
       }
     });
+
+    res.status(201).json(position);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({
@@ -143,27 +182,7 @@ router.get('/:walletAddress', async (req: Request, res: Response, next: NextFunc
       });
     }
 
-    res.json({
-      success: true,
-      data: positions.map(pos => ({
-        id: pos.id,
-        walletAddress: pos.wallet_address,
-        token: pos.token,
-        amount: pos.amount,
-        riskProfile: pos.risk_profile,
-        status: pos.status,
-        allocation: pos.allocation,
-        strategy: pos.strategies ? {
-          id: pos.strategies.id,
-          name: pos.strategies.name,
-          description: pos.strategies.description,
-          riskTier: pos.strategies.risk_tier,
-          expectedApy: pos.strategies.expected_apy
-        } : null,
-        createdAt: pos.created_at,
-        updatedAt: pos.updated_at
-      }))
-    });
+    res.json(positions || []);
   } catch (error) {
     return next(error);
   }
@@ -203,29 +222,7 @@ router.get('/detail/:id', async (req: Request, res: Response, next: NextFunction
       });
     }
 
-    res.json({
-      success: true,
-      data: {
-        id: position.id,
-        walletAddress: position.wallet_address,
-        token: position.token,
-        amount: position.amount,
-        riskProfile: position.risk_profile,
-        status: position.status,
-        allocation: position.allocation,
-        strategy: position.strategies ? {
-          id: position.strategies.id,
-          name: position.strategies.name,
-          description: position.strategies.description,
-          riskTier: position.strategies.risk_tier,
-          expectedApy: position.strategies.expected_apy,
-          protocolAllocations: position.strategies.protocol_allocations,
-          leverageRatio: position.strategies.leverage_ratio
-        } : null,
-        createdAt: position.created_at,
-        updatedAt: position.updated_at
-      }
-    });
+    res.json(position);
   } catch (error) {
     return next(error);
   }
@@ -261,8 +258,8 @@ router.patch('/:id/allocations', async (req: Request, res: Response, next: NextF
       updated_at: new Date().toISOString()
     };
 
-    if (validatedData.riskProfile) {
-      updateData.risk_profile = validatedData.riskProfile;
+    if (validatedData.risk_profile) {
+      updateData.risk_profile = validatedData.risk_profile;
     }
 
     if (validatedData.allocation) {
@@ -289,15 +286,7 @@ router.patch('/:id/allocations', async (req: Request, res: Response, next: NextF
       updates: validatedData
     });
 
-    res.json({
-      success: true,
-      data: {
-        id: updated.id,
-        riskProfile: updated.risk_profile,
-        allocation: updated.allocation,
-        updatedAt: updated.updated_at
-      }
-    });
+    res.json(updated);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({

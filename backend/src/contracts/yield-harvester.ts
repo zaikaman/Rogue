@@ -12,8 +12,8 @@ const YIELD_HARVESTER_ADDRESS = process.env.YIELD_HARVESTER_ADDRESS || '0x000000
 
 // ABI - minimal interface for YieldHarvester
 const YIELD_HARVESTER_ABI = [
-  'function depositToProtocol(bytes32 positionId, string memory protocol, address token, uint256 amount) external',
-  'function compoundYield(bytes32 positionId, string memory protocol, uint256 yieldAmount) external',
+  'function depositToProtocol(bytes32 positionId, string memory protocol, address token, uint256 amount, address user, uint256 estimatedGasCost) external',
+  'function compoundYield(bytes32 positionId, string memory protocol, uint256 yieldAmount, address user, uint256 estimatedGasCost) external',
   'function withdrawFromProtocol(bytes32 positionId, string memory protocol, uint256 amount) external',
   'function executeHedge(bytes32 positionId, uint256 amount) external',
   'function claimRewards(bytes32 positionId, address user, uint256 amount) external',
@@ -36,6 +36,16 @@ export function getYieldHarvesterContract(signer?: ethers.Signer) {
 }
 
 /**
+ * Estimate gas cost for a transaction (in wei)
+ */
+export async function estimateGasCost(gasLimit: number = 200000): Promise<bigint> {
+  const provider = getProvider();
+  const feeData = await provider.getFeeData();
+  const gasPrice = feeData.gasPrice || ethers.parseUnits('0.01', 'gwei'); // Base is very cheap
+  return BigInt(gasLimit) * gasPrice;
+}
+
+/**
  * Deposit tokens to a DeFi protocol
  */
 export async function depositToProtocol(
@@ -43,15 +53,19 @@ export async function depositToProtocol(
   positionId: string,
   protocol: string,
   token: string,
-  amount: string
+  amount: string,
+  userAddress: string
 ): Promise<string> {
   try {
     const contract = getYieldHarvesterContract(signer);
     const amountWei = ethers.parseUnits(amount, 6);
+    
+    // Estimate gas cost (Base is very cheap, ~200k gas * 0.01 gwei = ~$0.0002)
+    const estimatedGas = await estimateGasCost(200000);
 
-    logger.info('Depositing to protocol', { positionId, protocol, amount });
+    logger.info('Depositing to protocol', { positionId, protocol, amount, estimatedGas: estimatedGas.toString() });
 
-    const tx = await contract.depositToProtocol(positionId, protocol, token, amountWei);
+    const tx = await contract.depositToProtocol(positionId, protocol, token, amountWei, userAddress, estimatedGas);
     const receipt = await tx.wait();
 
     logger.info('Deposit successful', {
@@ -74,15 +88,19 @@ export async function compoundYield(
   signer: ethers.Signer,
   positionId: string,
   protocol: string,
-  yieldAmount: string
+  yieldAmount: string,
+  userAddress: string
 ): Promise<string> {
   try {
     const contract = getYieldHarvesterContract(signer);
     const amountWei = ethers.parseUnits(yieldAmount, 6);
+    
+    // Estimate gas cost
+    const estimatedGas = await estimateGasCost(150000);
 
-    logger.info('Compounding yield', { positionId, protocol, yieldAmount });
+    logger.info('Compounding yield', { positionId, protocol, yieldAmount, estimatedGas: estimatedGas.toString() });
 
-    const tx = await contract.compoundYield(positionId, protocol, amountWei);
+    const tx = await contract.compoundYield(positionId, protocol, amountWei, userAddress, estimatedGas);
     const receipt = await tx.wait();
 
     logger.info('Compound successful', {

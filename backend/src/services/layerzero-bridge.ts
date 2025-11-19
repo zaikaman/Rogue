@@ -7,15 +7,11 @@ import { ethers } from 'ethers';
 import { logger } from '../utils/logger';
 
 const LAYERZERO_ENDPOINTS = {
-  mumbai: '0xf69186dfBa60DdB133E91E9A4B5673624293d8F8',
-  sepolia: '0xae92d5aD7583AD66E49A0c67BAd18F6ba52dDDc1',
-  base_sepolia: '0x6EDCE65403992e310A62460808c4b910D972f10f'
+  base: '0x1a44076050125825900e736c501f859c50fE728c' // Base Mainnet LayerZero endpoint
 };
 
 const CHAIN_IDS = {
-  mumbai: 10109,
-  sepolia: 10161,
-  base_sepolia: 10245
+  base: 184 // Base Mainnet LayerZero chain ID
 };
 
 interface BridgeQuote {
@@ -39,8 +35,8 @@ interface BridgeTransaction {
  * Get bridge quote for cross-chain transfer
  */
 export async function getBridgeQuote(
-  sourceChain: 'mumbai' | 'sepolia' | 'base_sepolia',
-  destChain: 'mumbai' | 'sepolia' | 'base_sepolia',
+  sourceChain: 'base',
+  destChain: 'base',
   token: string,
   amount: string
 ): Promise<BridgeQuote> {
@@ -90,8 +86,8 @@ export async function getBridgeQuote(
  * Build bridge transaction
  */
 export async function buildBridgeTransaction(
-  sourceChain: 'mumbai' | 'sepolia' | 'base_sepolia',
-  destChain: 'mumbai' | 'sepolia' | 'base_sepolia',
+  sourceChain: 'base',
+  destChain: 'base',
   token: string,
   amount: string,
   recipient: string
