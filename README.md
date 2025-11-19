@@ -20,7 +20,7 @@ Rogue/
 - **Multi-Agent AI System**: Researcher → Analyzer → Executor → Governor workflow
 - **Autonomous Yield Optimization**: Auto-compound and rebalance based on risk profile
 - **Risk Profiles**: Low, Medium, High risk tolerance settings
-- **Multi-Token Support**: USDC and KRWQ staking
+- **Multi-Token Support**: USDC staking
 - **Real-time APY Tracking**: Live yield estimates from Frax, Aave, and other protocols
 - **One-Click Operations**: Stake, claim rewards, and unstake with single transactions
 - **ATP Token Rewards**: Governance token distribution for platform users

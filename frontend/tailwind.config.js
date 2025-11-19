@@ -29,6 +29,13 @@ export default {
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'glitch': 'glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both',
         'scan': 'scan 3s linear infinite',
+        'marquee': 'marquee 25s linear infinite',
+      },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
       },
     },
   },

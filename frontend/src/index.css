@@ -100,6 +100,11 @@
     background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.8), transparent);
     animation: scan 3s linear infinite;
   }
+
+  .mask-linear-fade {
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  }
   
   @keyframes scan {
     0% { top: 0; left: -100%; }
